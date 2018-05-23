@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:id="@+id/LinearLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="444dp"
+            android:orientation="vertical" >
+            
+            <com.wrapp.floatlabelededittext.FloatLabeledEditText
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content">
+		
+		        <EditText
+	                android:id="@+id/T_IP"
+	                android:layout_width="match_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_margin="5dp"
+	                android:ems="10"
+	                android:hint="Ip del Servidor" />
+		    </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+		    
+            <com.wrapp.floatlabelededittext.FloatLabeledEditText
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content">
+		
+		        <EditText
+	                android:id="@+id/T_PROYECTO"
+	                android:layout_width="match_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_margin="5dp"
+	                android:ems="10"
+	                android:hint="Nombre del Proyecto" />
+		    </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+            
+			<com.wrapp.floatlabelededittext.FloatLabeledEditText
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content">
+		
+		        <EditText
+	                android:id="@+id/T_MEMORIA"
+	                android:layout_width="match_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_margin="5dp"
+	                android:layout_marginTop="48dp"
+	                android:ems="10"
+	                android:hint="Sitio almacenamiento, Ej: sdcard0" />
+		    </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+
+            <RadioGroup
+                android:id="@+id/radioGroup1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <RadioButton
+                    android:id="@+id/R_VTOTAL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Total" />
+
+                <RadioButton
+                    android:id="@+id/R_VLIMITADA"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Limitada" />
+            </RadioGroup>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="59dp" >
+
+                <CheckBox
+                    android:id="@+id/CK_INTERNET"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_margin="5dp"
+                    android:layout_toRightOf="@+id/CK_FOTOS"
+                    android:text="Internet" />
+
+            </RelativeLayout>
+            
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

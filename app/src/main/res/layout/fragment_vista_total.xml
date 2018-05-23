@@ -1,0 +1,68 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/buttonfirst"
+        android:drawSelectorOnTop="false" >
+    </ListView>
+
+    <ImageButton
+        android:id="@+id/buttonfirst"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="first"
+        android:src="@mipmap/primero" />
+
+    <TextView
+        android:id="@+id/displaying"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/buttonnext"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/buttonnext"
+        android:layout_toRightOf="@+id/buttonprev"
+        android:gravity="center_horizontal|center_vertical"
+        android:textSize="13sp" />
+
+    <ProgressBar
+        android:id="@+id/progressBar1"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/displaying"
+        android:layout_centerHorizontal="true"
+        android:indeterminateOnly="true" />
+
+    <ImageButton
+        android:id="@+id/buttonlast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@android:id/list"
+        android:layout_alignParentRight="true"
+        android:onClick="last"
+        android:src="@mipmap/ultimo" />
+
+    <ImageButton
+        android:id="@+id/buttonnext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@android:id/list"
+        android:layout_toLeftOf="@+id/buttonlast"
+        android:onClick="next"
+        android:src="@mipmap/siguiente" />
+
+    <ImageButton
+        android:id="@+id/buttonprev"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@android:id/list"
+        android:layout_toRightOf="@+id/buttonfirst"
+        android:onClick="previous"
+        android:src="@mipmap/anterior" />
+
+</RelativeLayout>

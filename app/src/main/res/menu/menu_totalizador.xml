@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="go.gestionordenes.OperarioActivity" >
+    
+    <item
+        android:id="@+id/m_guardar"
+        android:orderInCategory="100"
+        android:title="Guardar"
+        app:showAsAction="never"/>
+
+</menu>

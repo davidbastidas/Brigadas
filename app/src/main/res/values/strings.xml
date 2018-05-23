@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">App GeoDato</string>
+    <string name="action_settings">Configuracion</string>
+    <string name="usuario">Usuario</string>
+    <string name="contrasena">Contraseña</string>
+    <string name="entrar">Entrar</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_operario">Operario</string>
+    <string name="title_activity_admin">Admin</string>
+
+    <!-- Menu de Operario -->
+    <string-array name="nav_drawer_items_operario">
+        <item>Inicio</item>
+        <item>Brigadas Atencion Daños</item>
+        <item>Totalizadores</item>
+        <item>Novedades</item>
+        <item>Salir</item>
+    </string-array>
+
+    <!-- iconos de navegacion -->
+    <array name="nav_drawer_icons_operario">
+        <item>@mipmap/ic_home</item>
+        <item>@mipmap/ic_announcement_white_36dp</item>
+        <item>@mipmap/ic_turned_in_not_white_36dp</item>
+        <item>@mipmap/ic_card_membership_white_36dp</item>
+        <item>@mipmap/logout</item>
+    </array>
+
+    <!-- Content Description -->
+    <string name="desc_list_item_icon">Item Icon</string>
+
+    <!-- Menu de Admin -->
+    <string-array name="nav_drawer_items_admin">
+        <item>Configuracion</item>
+        <item>Contraseña</item>
+        <item>Borrar Trabajo</item>
+    </string-array>
+
+    <!-- iconos de navegacion -->
+    <array name="nav_drawer_icons_admin">
+        <item>@mipmap/configuracion</item>
+        <item>@mipmap/password</item>
+        <item>@mipmap/delete</item>
+    </array>
+
+    <string name="displayshort">%1$s - %2$s of %3$s</string>
+
+    <!-- menu guardar -->
+    <string name="mguardar">Guardar</string>
+    <string name="mcamara">Camara</string>
+    <string name="mregresar">Regresar</string>
+    <string name="magregaractividad">Agregar Actividad</string>
+    <string name="magregarobs">Agregar Observacion</string>
+    <string name="manomalia">Agregar Anomalia</string>
+    <string name="title_activity_brigada">Brigadas y Atencion Daños</string>
+    <string name="title_activity_brigada_form">Nueva Accion</string>
+    <string name="title_activity_totalizador">Totalizador</string>
+    <string name="title_activity_totalizador_form">Nuevo Totalizador</string>
+    <string name="title_activity_novedad">Novedad</string>
+    <string name="title_activity_novedad_form">Nueva Novedad</string>
+    
+    <string name="title_activity_mapa">Mapa</string>
+
+</resources>

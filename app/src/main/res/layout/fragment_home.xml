@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ScrollView1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/textView1"
+            style="@style/h1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reporte de Actividad"/>
+
+        <TextView
+            android:id="@+id/T_CONS_PROCESO"
+            style="@style/p_bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="reporte" />
+
+        <TextView
+            android:id="@+id/TextView01"
+            style="@style/h1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Estado de Datos de Tablas" />
+        
+        <TextView
+            android:id="@+id/estado"
+            style="@style/p_bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="baja de datos" />
+
+        <TextView
+            android:id="@+id/TextView02"
+            style="@style/h1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Envio de Acciones" />
+
+        <TextView
+            android:id="@+id/envio"
+            style="@style/p_bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="envios" />
+
+    </LinearLayout>
+
+</ScrollView>

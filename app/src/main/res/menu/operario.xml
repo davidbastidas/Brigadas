@@ -1,0 +1,13 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="go.gestionordenes.OperarioActivity" >
+
+    <item
+        android:id="@+id/operario"
+        android:icon="@mipmap/ic_swap_vert_white_36dp"
+        android:title="Sincronizar"
+        android:orderInCategory="1"
+    	app:showAsAction="always"/>
+
+</menu>
