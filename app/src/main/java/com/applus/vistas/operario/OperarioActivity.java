@@ -27,13 +27,14 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-public class OperarioActivity extends Activity{
+public class OperarioActivity extends AppCompatActivity {
 
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
@@ -131,8 +132,8 @@ public class OperarioActivity extends Activity{
 		mDrawerList.setAdapter(adapter);
 
 		// enabling action bar app icon and behaving it as toggle button
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-		getActionBar().setHomeButtonEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setHomeButtonEnabled(true);
 
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
 				R.mipmap.ic_drawer, //nav menu toggle icon
@@ -140,13 +141,13 @@ public class OperarioActivity extends Activity{
 				R.string.app_name // nav drawer close - description for accessibility
 		) {
 			public void onDrawerClosed(View view) {
-				getActionBar().setTitle(mTitle);
+				getSupportActionBar().setTitle(mTitle);
 				// calling onPrepareOptionsMenu() to show action bar icons
 				invalidateOptionsMenu();
 			}
 
 			public void onDrawerOpened(View drawerView) {
-				getActionBar().setTitle(mDrawerTitle);
+				getSupportActionBar().setTitle(mDrawerTitle);
 				// calling onPrepareOptionsMenu() to hide action bar icons
 				invalidateOptionsMenu();
 			}
@@ -271,7 +272,7 @@ public class OperarioActivity extends Activity{
 	@Override
 	public void setTitle(CharSequence title) {
 		mTitle = title;
-		getActionBar().setTitle(mTitle);
+		getSupportActionBar().setTitle(mTitle);
 	}
 
 	/**

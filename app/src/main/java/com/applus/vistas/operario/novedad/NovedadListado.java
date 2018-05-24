@@ -18,9 +18,11 @@ import android.graphics.Color;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -28,7 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-public class NovedadListado extends ListActivity {
+public class NovedadListado extends AppCompatActivity {
 
 	protected static final int PAGESIZE = 10;
 
@@ -49,6 +51,7 @@ public class NovedadListado extends ListActivity {
 	private ImageButton prev;
 
 	private ImageButton next;
+	private ListView lista;
 	ArrayList<Novedades> servicios;
 	
 	NovedadController ServCont=new NovedadController();
@@ -68,6 +71,24 @@ public class NovedadListado extends ListActivity {
 		prev = (ImageButton) findViewById(R.id.buttonprev);
 		next = (ImageButton) findViewById(R.id.buttonnext);
 		last = (ImageButton) findViewById(R.id.buttonlast);
+		lista = (ListView)  findViewById(R.id.lista);
+		lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position,
+									long id) {
+				try {
+					Novedades o = (Novedades) parent.getItemAtPosition(position);
+					vistaDetalle(o);
+					/*Toast.makeText(
+					this,
+					"Selecci�n: " + Integer.toString(position) + " - "
+							+ o.getId() + ", " + o.getCliente(),
+					Toast.LENGTH_LONG).show();*/
+				} catch (Exception ex) {
+					Toast.makeText(Activity, "Selecci�n: " + ex, Toast.LENGTH_SHORT).show();
+				}
+			}
+		});
 		//la consulta se carga en background con la ejecucion del hilo asinktask
 		mostrarBarraProgreso();
 		consultarServicios();
@@ -100,22 +121,7 @@ public class NovedadListado extends ListActivity {
 			finish();
 		}
     }
-	@Override
-	protected void onListItemClick(ListView listView, View view, int position, long id) {
-		super.onListItemClick(listView, view, position, id);
-		try {
-			Novedades o = (Novedades) getListAdapter().getItem(position);
-			vistaDetalle(o);
-			/*Toast.makeText(
-					this,
-					"Selecci�n: " + Integer.toString(position) + " - "
-							+ o.getId() + ", " + o.getCliente(),
-					Toast.LENGTH_LONG).show();*/
-		} catch (Exception ex) {
-			Toast.makeText(this, "Selecci�n: " + ex, Toast.LENGTH_SHORT).show();
-		}
 
-	}
 	protected void onResume(){
 		super.onResume();
 	}
@@ -135,7 +141,7 @@ public class NovedadListado extends ListActivity {
 	}
 	public void actualizarVistas(){
 		try{
-			setListAdapter(new NovedadAdaptadorLista(Activity, servicios));
+			lista.setAdapter(new NovedadAdaptadorLista(Activity, servicios));
 			//System.out.println("Se metio ");
 		}catch(Exception ex){
 			System.out.println("Exception: "+ex);
