@@ -14,9 +14,12 @@ import android.graphics.Color;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -24,7 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-public class TotalizadorListado extends ListActivity {
+public class TotalizadorListado extends AppCompatActivity {
 
 	protected static final int PAGESIZE = 10;
 
@@ -45,6 +48,8 @@ public class TotalizadorListado extends ListActivity {
 	private ImageButton prev;
 
 	private ImageButton next;
+
+	private ListView lista;
 	ArrayList<Totalizadores> servicios;
 	
 	TotalizadorController ServCont=new TotalizadorController();
@@ -56,6 +61,7 @@ public class TotalizadorListado extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.fragment_vista_total);
+
 		Activity=this;
 		context=this;
 		progressBar = (ProgressBar) findViewById(R.id.progressBar1);
@@ -64,6 +70,24 @@ public class TotalizadorListado extends ListActivity {
 		prev = (ImageButton) findViewById(R.id.buttonprev);
 		next = (ImageButton) findViewById(R.id.buttonnext);
 		last = (ImageButton) findViewById(R.id.buttonlast);
+		lista = (ListView)  findViewById(R.id.lista);
+		lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position,
+									long id) {
+				try {
+					Totalizadores o = (Totalizadores) parent.getItemAtPosition(position);
+					vistaDetalle(o);
+					/*Toast.makeText(
+					this,
+					"Selecci�n: " + Integer.toString(position) + " - "
+							+ o.getId() + ", " + o.getCliente(),
+					Toast.LENGTH_LONG).show();*/
+				} catch (Exception ex) {
+					Toast.makeText(Activity, "Selecci�n: " + ex, Toast.LENGTH_SHORT).show();
+				}
+			}
+		});
 		//la consulta se carga en background con la ejecucion del hilo asinktask
 		mostrarBarraProgreso();
 		consultarServicios();
@@ -96,22 +120,7 @@ public class TotalizadorListado extends ListActivity {
 			finish();
 		}
     }
-	@Override
-	protected void onListItemClick(ListView listView, View view, int position, long id) {
-		super.onListItemClick(listView, view, position, id);
-		try {
-			Totalizadores o = (Totalizadores) getListAdapter().getItem(position);
-			vistaDetalle(o);
-			/*Toast.makeText(
-					this,
-					"Selecci�n: " + Integer.toString(position) + " - "
-							+ o.getId() + ", " + o.getCliente(),
-					Toast.LENGTH_LONG).show();*/
-		} catch (Exception ex) {
-			Toast.makeText(this, "Selecci�n: " + ex, Toast.LENGTH_SHORT).show();
-		}
 
-	}
 	protected void onResume(){
 		super.onResume();
 	}
@@ -131,7 +140,7 @@ public class TotalizadorListado extends ListActivity {
 	}
 	public void actualizarVistas(){
 		try{
-			setListAdapter(new TotalizadorAdaptadorLista(Activity, servicios));
+			lista.setAdapter(new TotalizadorAdaptadorLista(Activity, servicios));
 			//System.out.println("Se metio ");
 		}catch(Exception ex){
 			System.out.println("Exception: "+ex);

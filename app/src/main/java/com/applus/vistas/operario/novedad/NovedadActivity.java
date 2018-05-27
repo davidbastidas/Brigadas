@@ -5,8 +5,9 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
-public class NovedadActivity extends Activity {
+public class NovedadActivity extends AppCompatActivity {
 
 	FragmentManager fragmentManager;
 	Fragment fragment = null;

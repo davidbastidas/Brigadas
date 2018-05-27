@@ -85,7 +85,6 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:layout_margin="5dp"
-                    android:layout_toRightOf="@+id/CK_FOTOS"
                     android:text="Internet" />
 
             </RelativeLayout>
