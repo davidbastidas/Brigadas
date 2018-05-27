@@ -16,6 +16,8 @@
         <item>Brigadas Atencion Daños</item>
         <item>Totalizadores</item>
         <item>Novedades</item>
+        <item>Censo</item>
+        <item>Clientes</item>
         <item>Salir</item>
     </string-array>
 
@@ -25,6 +27,8 @@
         <item>@mipmap/ic_announcement_white_36dp</item>
         <item>@mipmap/ic_turned_in_not_white_36dp</item>
         <item>@mipmap/ic_card_membership_white_36dp</item>
+        <item>@mipmap/censo</item>
+        <item>@mipmap/clientes</item>
         <item>@mipmap/logout</item>
     </array>
 
