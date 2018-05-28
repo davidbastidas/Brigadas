@@ -187,6 +187,22 @@ public class SQLiteController extends SQLiteOpenHelper {
 				" tipo int" +
 				")");
 		db.execSQL("create table imagenes(id INTEGER PRIMARY KEY AUTOINCREMENT, ruta VARCHAR(255), nombre VARCHAR(150), no_orden BIGINT, estado INT, fecha DATE)");
+		db.execSQL("create table censos(" +
+				" id INTEGER PRIMARY KEY AUTOINCREMENT," +
+				" codigo INTEGER," +
+				" barrio TEXT," +
+				" fk_usuario INT," +
+				" last_insert INT," +
+				" latitud TEXT," +
+				" longitud TEXT," +
+				" departamento TEXT," +
+				" municipio TEXT," +
+				" cliente TEXT," +
+				" fecha DATE," +
+				" hora TIME," +
+				" fk_cliente INT," +
+				" acurracy VARCHAR(45)" +
+				")");
 	}
 
 	@Override

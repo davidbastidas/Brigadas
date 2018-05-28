@@ -4,12 +4,14 @@ import com.applus.R;
 import com.applus.modelos.BrigadaMaterialParcelable;
 import com.applus.modelos.BrigadaParcelable;
 import com.applus.modelos.BrigadaTrabajoParcelable;
+import com.applus.modelos.Censo;
 import com.applus.modelos.Novedades;
 import com.applus.modelos.SesionSingleton;
 import com.applus.modelos.Totalizadores;
 import com.applus.modelos.Usuario;
 import com.applus.vistas.operario.OperarioActivity;
 import com.applus.vistas.operario.brigada.OnBrigada;
+import com.applus.vistas.operario.censo.OnCenso;
 import com.applus.vistas.operario.novedad.OnNovedad;
 import com.applus.vistas.operario.totalizadores.OnTotalizador;
 
@@ -30,12 +32,13 @@ import android.os.Handler;
 import android.os.Message;
 import android.widget.Toast;
 
-public class ConexionController implements AsyncResponse,OnBrigada,OnTotalizador,OnNovedad	{
+public class ConexionController implements AsyncResponse,OnBrigada,OnTotalizador,OnNovedad, OnCenso	{
 	
 	public AsyncResponse callback_get=null;
 	public OnBrigada callback=null;
 	public OnTotalizador callback_totalizador=null;
 	public OnNovedad callback_novedad=null;
+	public OnCenso callback_censo=null;
 	Activity activity;
 	SesionSingleton sesion;
 	String user="";
@@ -219,6 +222,16 @@ public class ConexionController implements AsyncResponse,OnBrigada,OnTotalizador
 			accionJava,
 			activity
 		});
+	}
+
+	public void enviarCenso(Censo censo){
+		/*String accionJava = "enviarNovedad";
+		WebServiceTaskSET asyncTask = new WebServiceTaskSET();
+		asyncTask.callback_novedad = this;
+		asyncTask.execute(new Object[] {
+				accionJava,
+				novedad
+		});*/
 	}
 	
 	@Override
@@ -500,4 +513,8 @@ public class ConexionController implements AsyncResponse,OnBrigada,OnTotalizador
 		
 	}
 
+	@Override
+	public void onEnviarInternetCenso(String result) {
+
+	}
 }

@@ -6,6 +6,7 @@ import com.applus.modelos.BrigadaParcelable;
 import com.applus.modelos.Calendario;
 import com.applus.modelos.SesionSingleton;
 import com.applus.vistas.operario.brigada.BrigadaListado;
+import com.applus.vistas.operario.censo.CensoListado;
 import com.applus.vistas.operario.novedad.NovedadListado;
 import com.applus.vistas.operario.totalizadores.TotalizadorListado;
 import com.applus.vistas.slidermenu.adapter.NavDrawerListAdapter;
@@ -262,6 +263,17 @@ public class OperarioActivity extends AppCompatActivity {
 			}
 			break;
 		case 4:
+			//censo
+			intentar = new Intent(this, CensoListado.class);
+			startActivity(intentar);
+			break;
+		case 5:
+			//clientes
+			intentar = new Intent(this, NovedadListado.class);
+			startActivity(intentar);
+			break;
+		case 6:
+			//salida
 			confirmDialogEliminarServicios();
 			break;
 

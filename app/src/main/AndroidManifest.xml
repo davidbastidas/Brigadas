@@ -61,5 +61,13 @@
             android:name="com.applus.vistas.operario.novedad.NovedadListado"
             android:label="@string/title_activity_novedad_form"
             android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="com.applus.vistas.operario.censo.CensoActivity"
+            android:label="@string/title_activity_censo_form"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="com.applus.vistas.operario.censo.CensoListado"
+            android:label="@string/title_activity_censo"
+            android:screenOrientation="portrait"></activity>
     </application>
 </manifest>

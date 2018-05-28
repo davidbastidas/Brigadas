@@ -3,5 +3,5 @@
     android:id="@+id/frame_totalizadores_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="go.vistas.operario.brigada.BrigadaActivity"
+    tools:context="com.applus.vistas.operario.brigada.BrigadaActivity"
     tools:ignore="MergeRootFrame" />
