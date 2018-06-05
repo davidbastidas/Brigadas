@@ -14,4 +14,6 @@ public interface AsyncResponse {
 	void onTablaNovedadTipoNovedad(String output);
 	void onTablaNovedadObservacion(String output);
 	void onBajarDatosTablas(boolean respuesta);
+
+	void onDescargarFormularioCenso(String output);
 }

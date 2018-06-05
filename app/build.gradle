@@ -27,4 +27,5 @@ dependencies {
     implementation files('libs/httpclient-4.1.1.jar')
     implementation files('libs/http-core-4.1.jar')
     compile ('com.android.support:appcompat-v7:25.0.1')
+    implementation ('com.google.code.gson:gson:2.8.2')
 }

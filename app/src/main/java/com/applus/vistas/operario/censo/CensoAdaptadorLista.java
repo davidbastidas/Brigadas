@@ -28,56 +28,31 @@ public class CensoAdaptadorLista extends BaseAdapter {
 	LayoutInflater inflater;
 	TextView titulo,subtitulo,t_dir_barrio,t_comentario,t_fecha_hora;
 	ImageView imageView,image_estado;
-	DepartamentoController dep=new DepartamentoController();
-	ArrayList<Departamento> departamentos;
-	MunicipioController mun=new MunicipioController();
-	ArrayList<Municipio> municipios;
-	BarrioController bar=new BarrioController();
-	ArrayList<Barrio> barrios;
-	String s_departamento="",s_municipio="",s_barrio="";
 	
 	public CensoAdaptadorLista(Activity actividad, ArrayList<Censo> censos){
 		super();
 		this.actividad = actividad;
 		this.censos = censos;
-		departamentos=dep.consultar(0, 0, "", actividad);
-		municipios=mun.consultar(0, 0, "", actividad);
-		barrios=bar.consultar(0, 0, "", actividad);
 	}
 
 	public View getView(int position, View convertView, ViewGroup parent) {
 		inflater = actividad.getLayoutInflater();
 		view = inflater.inflate(R.layout.vista_lista_general1, null, true);
-		for (Departamento depart : departamentos) {
-			if(depart.getId()==Long.parseLong(censos.get(position).getDepartamento())){
-				s_departamento=depart.getNombre();break;
-			}
-		}
-		for (Municipio muni : municipios) {
-			if(muni.getId()==Long.parseLong(censos.get(position).getMunicipio())){
-				s_municipio=muni.getNombre();break;
-			}
-		}
-		for (Barrio barri : barrios) {
-			if(barri.getId()==Long.parseLong(censos.get(position).getBarrio())){
-				s_barrio=barri.getNombre();break;
-			}
-		}
+
 		titulo = (TextView) view.findViewById(R.id.t_numero);
-		titulo.setText("Censo. describir tipo");
+		titulo.setText("Censo con NIC: "+censos.get(position).getNic());
 		
 		subtitulo = (TextView) view.findViewById(R.id.t_tipo_id_tipo);
-		subtitulo.setText("DEPARTAMENTO. "+s_departamento+" - MUNICIPIO. "+s_municipio);
+		subtitulo.setText("");
 		
 		t_dir_barrio = (TextView) view.findViewById(R.id.t_dir_barrio);
-		t_dir_barrio.setText("BARRIO. "+s_barrio);
+		t_dir_barrio.setText("");
 		
 		t_comentario = (TextView) view.findViewById(R.id.t_comentario);
-		t_comentario.setText(
-				"CODIGO. "+ censos.get(position).getCodigo());
+		t_comentario.setText("");
 		
 		t_fecha_hora = (TextView) view.findViewById(R.id.t_fecha_hora);
-		t_fecha_hora.setText(censos.get(position).getFecha());
+		t_fecha_hora.setText("Fecha: " + censos.get(position).getFecha());
 		
 		image_estado= (ImageView) view.findViewById(R.id.image_estado);
 		if(censos.get(position).getLast_insert()>0){

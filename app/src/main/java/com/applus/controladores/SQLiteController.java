@@ -190,6 +190,9 @@ public class SQLiteController extends SQLiteOpenHelper {
 		db.execSQL("create table censos(" +
 				" id INTEGER PRIMARY KEY AUTOINCREMENT," +
 				" codigo INTEGER," +
+				" nic INTEGER," +
+				" formulario TEXT," +
+				" datos TEXT," +
 				" barrio TEXT," +
 				" fk_usuario INT," +
 				" last_insert INT," +
@@ -202,6 +205,26 @@ public class SQLiteController extends SQLiteOpenHelper {
 				" hora TIME," +
 				" fk_cliente INT," +
 				" acurracy VARCHAR(45)" +
+				")");
+
+		db.execSQL("create table censo_formulario(" +
+				" id INTEGER PRIMARY KEY AUTOINCREMENT," +
+				" formulario TEXT" +
+				")");
+
+		db.execSQL("create table clientes(" +
+				" id INTEGER PRIMARY KEY AUTOINCREMENT," +
+				" codigo INTEGER," +
+				" nombre TEXT," +
+				" direccion TEXT," +
+				" nic INTEGER," +
+				" tipo TEXT," +
+				" censo INTEGER," +
+				" tipo_cliente TEXT," +
+				" latitud TEXT," +
+				" longitud TEXT," +
+				" orden_reparto INTEGER," +
+				" itinerario TEXT" +
 				")");
 	}
 

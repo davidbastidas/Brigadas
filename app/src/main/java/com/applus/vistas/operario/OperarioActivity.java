@@ -7,6 +7,7 @@ import com.applus.modelos.Calendario;
 import com.applus.modelos.SesionSingleton;
 import com.applus.vistas.operario.brigada.BrigadaListado;
 import com.applus.vistas.operario.censo.CensoListado;
+import com.applus.vistas.operario.clientes.ClientesDescarga;
 import com.applus.vistas.operario.novedad.NovedadListado;
 import com.applus.vistas.operario.totalizadores.TotalizadorListado;
 import com.applus.vistas.slidermenu.adapter.NavDrawerListAdapter;
@@ -119,7 +120,7 @@ public class OperarioActivity extends AppCompatActivity {
 			// Clientes
 			navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1)));
 			// Salir
-			navDrawerItems.add(new NavDrawerItem(navMenuTitles[6], navMenuIcons.getResourceId(4, -1)));
+			navDrawerItems.add(new NavDrawerItem(navMenuTitles[6], navMenuIcons.getResourceId(6, -1)));
 		}else if(sesion.getTipo_usuario()==3){
 			// Inicio
 			navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1)));
@@ -130,7 +131,7 @@ public class OperarioActivity extends AppCompatActivity {
 			// Clientes
 			navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1)));
 			// Salir
-			navDrawerItems.add(new NavDrawerItem(navMenuTitles[6], navMenuIcons.getResourceId(4, -1)));
+			navDrawerItems.add(new NavDrawerItem(navMenuTitles[6], navMenuIcons.getResourceId(6, -1)));
 		}
 		
 
@@ -251,7 +252,9 @@ public class OperarioActivity extends AppCompatActivity {
 				intentar = new Intent(this, NovedadListado.class);
 				startActivity(intentar);
 			}else if(sesion.getTipo_usuario()==3){
-				confirmDialogEliminarServicios();
+				//censo
+				intentar = new Intent(this, CensoListado.class);
+				startActivity(intentar);
 			}
 			break;
 		case 3:
@@ -259,22 +262,43 @@ public class OperarioActivity extends AppCompatActivity {
 				intentar = new Intent(this, NovedadListado.class);
 				startActivity(intentar);
 			}else if(sesion.getTipo_usuario()==4){
-				confirmDialogEliminarServicios();
+				//censo
+				intentar = new Intent(this, CensoListado.class);
+				startActivity(intentar);
+			}else if(sesion.getTipo_usuario()==3){
+				//clientes
+				intentar = new Intent(this, ClientesDescarga.class);
+				startActivity(intentar);
 			}
 			break;
 		case 4:
-			//censo
-			intentar = new Intent(this, CensoListado.class);
-			startActivity(intentar);
+			if(sesion.getTipo_usuario()==5){
+				//censo
+				intentar = new Intent(this, CensoListado.class);
+				startActivity(intentar);
+			}else if(sesion.getTipo_usuario()==4){
+				//clientes
+				intentar = new Intent(this, ClientesDescarga.class);
+				startActivity(intentar);
+			}else if(sesion.getTipo_usuario()==3){
+				confirmDialogEliminarServicios();
+			}
+
 			break;
 		case 5:
-			//clientes
-			intentar = new Intent(this, NovedadListado.class);
-			startActivity(intentar);
+			if(sesion.getTipo_usuario()==5){
+				//clientes
+				intentar = new Intent(this, ClientesDescarga.class);
+				startActivity(intentar);
+			}else if(sesion.getTipo_usuario()==4){
+				confirmDialogEliminarServicios();
+			}
 			break;
 		case 6:
-			//salida
-			confirmDialogEliminarServicios();
+			if(sesion.getTipo_usuario()==5){
+				//salida
+				confirmDialogEliminarServicios();
+			}
 			break;
 
 		default:
@@ -369,7 +393,7 @@ public class OperarioActivity extends AppCompatActivity {
 		if(dialogoSINO==null){
 			dialogoSINO = new AlertDialog.Builder(this);  
 			dialogoSINO.setTitle("Importante");
-			dialogoSINO.setMessage("�Desea Salir?");         
+			dialogoSINO.setMessage("¿Desea Salir?");
 			dialogoSINO.setCancelable(false);
 			dialogoSINO.setIcon(R.mipmap.faq);
 			dialogoSINO.setPositiveButton("SI", new DialogInterface.OnClickListener() {

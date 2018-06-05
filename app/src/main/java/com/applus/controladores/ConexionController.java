@@ -1,6 +1,7 @@
 package com.applus.controladores;
 import com.applus.controladores.interfaces.AsyncResponse;
 import com.applus.R;
+import com.applus.controladores.interfaces.ClientesInterface;
 import com.applus.modelos.BrigadaMaterialParcelable;
 import com.applus.modelos.BrigadaParcelable;
 import com.applus.modelos.BrigadaTrabajoParcelable;
@@ -32,13 +33,14 @@ import android.os.Handler;
 import android.os.Message;
 import android.widget.Toast;
 
-public class ConexionController implements AsyncResponse,OnBrigada,OnTotalizador,OnNovedad, OnCenso	{
+public class ConexionController implements AsyncResponse,OnBrigada,OnTotalizador,OnNovedad, OnCenso, ClientesInterface {
 	
 	public AsyncResponse callback_get=null;
 	public OnBrigada callback=null;
 	public OnTotalizador callback_totalizador=null;
 	public OnNovedad callback_novedad=null;
 	public OnCenso callback_censo=null;
+	public ClientesInterface clienteInterface = null;
 	Activity activity;
 	SesionSingleton sesion;
 	String user="";
@@ -225,13 +227,23 @@ public class ConexionController implements AsyncResponse,OnBrigada,OnTotalizador
 	}
 
 	public void enviarCenso(Censo censo){
-		/*String accionJava = "enviarNovedad";
+		String accionJava = "enviarCenso";
 		WebServiceTaskSET asyncTask = new WebServiceTaskSET();
-		asyncTask.callback_novedad = this;
+		asyncTask.callback_censo = this;
 		asyncTask.execute(new Object[] {
 				accionJava,
-				novedad
-		});*/
+				censo
+		});
+	}
+
+	public void enviarCensoMasivo(){
+		String accionJava = "enviarCensoMasivo";
+		WebServiceTaskSET asyncTask = new WebServiceTaskSET();
+		asyncTask.callback_censo = this;
+		asyncTask.execute(new Object[] {
+				accionJava,
+				activity
+		});
 	}
 	
 	@Override
@@ -444,6 +456,51 @@ public class ConexionController implements AsyncResponse,OnBrigada,OnTotalizador
 		System.out.println("onTablaNovedadObservacion= "+output);
 		callback_get.onTablaNovedadObservacion(output);
 	}
+
+	public void getFormularioCenso(String user){
+		String accionJava = "getFormularioCenso";
+		WebServiceTaskGET asyncTask = new WebServiceTaskGET();
+		asyncTask.delegate = this;
+		this.user=user;
+		asyncTask.execute(new String[] {
+				accionJava,
+				user
+		});
+	}
+
+	@Override
+	public void onDescargarFormularioCenso(String output) {
+		System.out.println("onDescargarFormularioCenso= "+output);
+		callback_get.onDescargarFormularioCenso(output);
+	}
+
+	public void getCountClientes(String user, String tabla, long idCampo){
+		String accionJava = "getCountClientes";
+		WebServiceTaskGET asyncTask = new WebServiceTaskGET();
+		asyncTask.clienteInterface = this;
+		this.user=user;
+		asyncTask.execute(new String[] {
+				accionJava,
+				user,
+				tabla,
+				"" + idCampo
+		});
+	}
+
+	public void getClientes(String user, long pagina, long limit, String tabla, long idCampo){
+		String accionJava = "getClientes";
+		WebServiceTaskGET asyncTask = new WebServiceTaskGET();
+		asyncTask.clienteInterface = this;
+		this.user=user;
+		asyncTask.execute(new String[] {
+				accionJava,
+				user,
+				""+pagina,
+				""+limit,
+				tabla,
+				"" + idCampo
+		});
+	}
 	
 	//************************//////
 	public String FormatDate(String fecha) {
@@ -515,6 +572,16 @@ public class ConexionController implements AsyncResponse,OnBrigada,OnTotalizador
 
 	@Override
 	public void onEnviarInternetCenso(String result) {
+		callback_censo.onEnviarInternetCenso(result);
+	}
 
+	@Override
+	public void onCountClientes(String result) {
+		clienteInterface.onCountClientes(result);
+	}
+
+	@Override
+	public void onDescargarClientes(String output) {
+		clienteInterface.onDescargarClientes(output);
 	}
 }

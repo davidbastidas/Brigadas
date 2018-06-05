@@ -3,7 +3,10 @@ package com.applus.modelos;
 public class Censo {
 	long id;
 	long codigo;
+	long nic;
 	String barrio;
+	String formulario;
+	String datos;
 	String json;
 	int fk_usuario;
 	int last_insert;
@@ -13,6 +16,31 @@ public class Censo {
 	String cliente;
 	long fk_cliente;
 	float acurracy;
+
+	public long getNic() {
+		return nic;
+	}
+
+	public void setNic(long nic) {
+		this.nic = nic;
+	}
+
+	public String getFormulario() {
+		return formulario;
+	}
+
+	public void setFormulario(String formulario) {
+		this.formulario = formulario;
+	}
+
+	public String getDatos() {
+		return datos;
+	}
+
+	public void setDatos(String datos) {
+		this.datos = datos;
+	}
+
 	public float getAcurracy() {
 		return acurracy;
 	}

@@ -1,9 +1,13 @@
 package com.applus.modelos;
 
 public class CensoForm {
+    private int id;
     private String tipo;
     private String nombre;
     private String items;
+    private String watts;
+    private int cantidad;
+    private int consumo;
 
     public String getTipo() {
         return tipo;
@@ -27,5 +31,37 @@ public class CensoForm {
 
     public void setItems(String items) {
         this.items = items;
+    }
+
+    public String getWatts() {
+        return watts;
+    }
+
+    public void setWatts(String watts) {
+        this.watts = watts;
+    }
+
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
+    }
+
+    public int getConsumo() {
+        return consumo;
+    }
+
+    public void setConsumo(int consumo) {
+        this.consumo = consumo;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

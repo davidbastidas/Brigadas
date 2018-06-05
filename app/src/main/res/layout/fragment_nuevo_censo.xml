@@ -1,0 +1,72 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.applus.vistas.operario.censo.CensoActivity">
+
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nombre"
+        android:textSize="13sp" />
+
+    <EditText
+        android:id="@+id/nc_nombre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Nombre"
+        android:inputType="textPersonName"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Direccion"
+        android:textSize="13sp" />
+
+    <EditText
+        android:id="@+id/nc_direccion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Direccion"
+        android:inputType="textPersonName"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="NIC"
+        android:textSize="13sp" />
+
+    <EditText
+        android:id="@+id/nc_nic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="NIC"
+        android:inputType="number"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/lb_consumo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Total consumo 0 Watts"
+        android:textStyle="bold" />
+
+    <ListView
+        android:id="@+id/nc_lista_electrodomesticos"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>

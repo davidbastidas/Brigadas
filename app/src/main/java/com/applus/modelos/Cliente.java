@@ -11,6 +11,7 @@ public class Cliente {
 	String itinerario;
 	int fk_distrito,fk_municipio,fk_barrio;
 	String distrito,municipio,barrio;
+
 	public String getDistrito() {
 		return distrito;
 	}

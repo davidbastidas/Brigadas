@@ -3,10 +3,12 @@ package com.applus.controladores;
 import com.applus.modelos.BrigadaMaterialParcelable;
 import com.applus.modelos.BrigadaParcelable;
 import com.applus.modelos.BrigadaTrabajoParcelable;
+import com.applus.modelos.Censo;
 import com.applus.modelos.Novedades;
 import com.applus.modelos.SesionSingleton;
 import com.applus.modelos.Totalizadores;
 import com.applus.vistas.operario.brigada.OnBrigada;
+import com.applus.vistas.operario.censo.OnCenso;
 import com.applus.vistas.operario.novedad.OnNovedad;
 import com.applus.vistas.operario.totalizadores.OnTotalizador;
 
@@ -45,6 +47,7 @@ public class WebServiceTaskSET extends AsyncTask<Object, Void, String> {
 	public OnBrigada callback=null;
 	public OnTotalizador callback_totalizador=null;
 	public OnNovedad callback_novedad=null;
+	public OnCenso callback_censo=null;
 	
 	String resultadoFinal="";
 	String nombreFuncion="";
@@ -86,6 +89,10 @@ public class WebServiceTaskSET extends AsyncTask<Object, Void, String> {
 			resultado=enviarTotalizadorMasivo(params);
 		}else if(nombreFuncion.equals("enviarNovedadMasivo")){
 			resultado=enviarNovedadMasivo(params);
+		}else if(nombreFuncion.equals("enviarCenso")){
+			resultado=enviarCenso(params);
+		}else if(nombreFuncion.equals("enviarCensoMasivo")){
+			resultado=enviarCensoMasivo(params);
 		}
 		
 		return resultado;
@@ -106,6 +113,10 @@ public class WebServiceTaskSET extends AsyncTask<Object, Void, String> {
 			callback_totalizador.onEnviarInternetTotalizador(result);
 		}else if(nombreFuncion.equals("enviarNovedadMasivo")){
 			callback_novedad.onEnviarInternetNovedad(result);
+		}else if(nombreFuncion.equals("enviarCenso")){
+			callback_censo.onEnviarInternetCenso(result);
+		}else if(nombreFuncion.equals("enviarCensoMasivo")){
+			callback_censo.onEnviarInternetCenso(result);
 		}
 	}
 	
@@ -566,6 +577,127 @@ public class WebServiceTaskSET extends AsyncTask<Object, Void, String> {
 			    } catch (Exception e) {
 			    	respuesta = "Exception: " + e;
 			    }
+			}
+		} catch (Exception e) {
+			System.out.println("Exception, setOrdenes= "+e);
+			System.out.println(Thread.currentThread().getStackTrace()[1]);
+			e.printStackTrace();
+		}
+		respuesta=cont+" Novedades Actualizadas";
+		return resultadoFinal=respuesta;
+	}
+
+	private String enviarCenso(Object... params){
+		String respuesta="";
+		Censo censo= (Censo) params[1];
+		try {
+			JSONObject mainObj = new JSONObject();
+			mainObj.put("electrodomesticos", censo.getFormulario());
+			System.out.println(censo.getFormulario());
+			mainObj.put("nic", censo.getNic());
+			mainObj.put("datos", censo.getDatos());
+			mainObj.put("latitud", censo.getLatitud());
+			mainObj.put("longitud", censo.getLongitud());
+			mainObj.put("usuario", censo.getFk_usuario());
+			mainObj.put("fecha", censo.getFecha());
+			mainObj.put("hora", censo.getHora());
+			try {
+				HttpParams httpParams = new BasicHttpParams();
+
+				ConnManagerParams.setTimeout(httpParams, 30000);
+				HttpConnectionParams.setConnectionTimeout(httpParams,30000);
+				HttpConnectionParams.setSoTimeout(httpParams, 30000);
+
+				HttpClient httpClient = new DefaultHttpClient(httpParams);
+				HttpPost httpPost = new HttpPost(NAMESPACE+"controlador=Censo&accion=insertar");
+
+				// Add your data
+				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
+						2);
+				nameValuePairs.add(new BasicNameValuePair("json", mainObj.toString()));
+				nameValuePairs.add(new BasicNameValuePair("user", ""+sesion.getFk_id_operario()));
+				httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+				HttpResponse httpResponse = httpClient.execute(httpPost);
+				HttpEntity httpEntity = httpResponse.getEntity();
+
+				if (httpEntity != null) {
+					InputStream inputStream = httpEntity.getContent();
+					if (inputStream != null) {
+						respuesta = leerRespuestaHttp(inputStream);
+					}
+				}
+			} catch (ConnectTimeoutException e) {
+				respuesta = "ConnectTimeoutException: " + e;
+			} catch (Exception e) {
+				respuesta = "Exception: " + e;
+			}
+
+		} catch (Exception e) {
+			System.out.println("Exception, setOrdenes= "+e);
+			System.out.println(Thread.currentThread().getStackTrace()[1]);
+			e.printStackTrace();
+		}
+		return resultadoFinal=respuesta;
+	}
+
+	private String enviarCensoMasivo(Object... params){
+		String respuesta="";
+		Activity activity=(Activity) params[1];
+		ArrayList<Censo> censos= null;
+		CensoController cen=new CensoController();
+		censos=cen.consultar(0, 0, "last_insert=0", activity);
+		int cont=0;
+		try {
+			for (Censo n : censos) {
+				JSONObject mainObj = new JSONObject();
+				mainObj.put("electrodomesticos", n.getFormulario());
+				mainObj.put("nic", n.getNic());
+				mainObj.put("datos", n.getDatos());
+				mainObj.put("latitud", n.getLatitud());
+				mainObj.put("longitud", n.getLongitud());
+				mainObj.put("usuario", n.getFk_usuario());
+				mainObj.put("fecha", n.getFecha());
+				mainObj.put("hora", n.getHora());
+				try {
+					HttpParams httpParams = new BasicHttpParams();
+
+					ConnManagerParams.setTimeout(httpParams, 30000);
+					HttpConnectionParams.setConnectionTimeout(httpParams,30000);
+					HttpConnectionParams.setSoTimeout(httpParams, 30000);
+
+					HttpClient httpClient = new DefaultHttpClient(httpParams);
+					HttpPost httpPost = new HttpPost(NAMESPACE+"controlador=Censo&accion=insertar");
+
+					// Add your data
+					List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
+							2);
+					nameValuePairs.add(new BasicNameValuePair("json", mainObj.toString()));
+					System.out.println("json masivo: "+mainObj.toString());
+					nameValuePairs.add(new BasicNameValuePair("user", ""+sesion.getFk_id_operario()));
+					httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+					HttpResponse httpResponse = httpClient.execute(httpPost);
+					HttpEntity httpEntity = httpResponse.getEntity();
+
+					if (httpEntity != null) {
+						InputStream inputStream = httpEntity.getContent();
+						if (inputStream != null) {
+							respuesta = leerRespuestaHttp(inputStream);
+							System.out.println("resp servidor censo: "+respuesta);
+							//convertir a json y actualizar
+							JSONObject json_data = new JSONObject(respuesta);
+							if(json_data.getInt("last_insert")>0){
+								ContentValues value=new ContentValues();
+								value.put("last_insert", json_data.getInt("last_insert"));
+								cen.actualizar(value, "id="+n.getId(), activity);
+								cont++;
+							}
+						}
+					}
+				} catch (ConnectTimeoutException e) {
+					respuesta = "ConnectTimeoutException: " + e;
+				} catch (Exception e) {
+					respuesta = "Exception: " + e;
+				}
 			}
 		} catch (Exception e) {
 			System.out.println("Exception, setOrdenes= "+e);

@@ -2,7 +2,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="go.gestionordenes.OperarioActivity" >
-    
+
+    <item
+        android:id="@+id/m_electrodomesticos"
+        android:icon="@mipmap/ic_add_box_white_48dp"
+        android:title="Electrodomesticos"
+        android:orderInCategory="1"
+        app:showAsAction="always"/>
     <item
         android:id="@+id/m_guardar_censo"
         android:orderInCategory="100"

@@ -6,12 +6,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.applus.modelos.Censo;
+import com.applus.modelos.Cliente;
 
 import java.util.ArrayList;
 
-public class CensoController {
+public class ClientesController {
 
-	private static String tableName = "censos";
+	private static String tableName = "clientes";
 	int tamanoConsulta=0;
 	long lastInsert;
 	public long getLastInsert() {
@@ -22,31 +23,24 @@ public class CensoController {
 		return tamanoConsulta;
 	}
 
-	public synchronized void insertar(Censo censo, Activity activity) {
+	public synchronized void insertar(Cliente censo, Activity activity) {
 		SQLiteController usdbh = SQLiteController.getInstance(activity);
 		SQLiteDatabase db = usdbh.getMyWritableDatabase();
 		// Si hemos abierto correctamente la base de datos
 		if (db != null) {
 			ContentValues registro=new ContentValues();
 			registro.put("codigo", censo.getCodigo());
+			registro.put("nombre", censo.getNombre());
+			registro.put("direccion", censo.getDireccion());
 			registro.put("nic", censo.getNic());
-			registro.put("barrio", censo.getBarrio());
-			registro.put("fk_usuario", censo.getFk_usuario());
-			registro.put("last_insert", 0);
+			registro.put("tipo", censo.getTipo());
+			registro.put("censo", censo.getCenso());
+			registro.put("tipo_cliente", censo.getTipo_cliente());
 			registro.put("latitud", censo.getLatitud());
 			registro.put("longitud", censo.getLongitud());
-			registro.put("departamento", censo.getDepartamento());
-			registro.put("municipio", censo.getMunicipio());
-			registro.put("cliente", censo.getCliente());
-			registro.put("fecha", censo.getFecha());
-			registro.put("hora", censo.getHora());
-			registro.put("fk_cliente", censo.getFk_cliente());
-			registro.put("acurracy", censo.getAcurracy());
-			registro.put("formulario", censo.getFormulario());
-			registro.put("datos", censo.getDatos());
+			registro.put("orden_reparto", censo.getOrden_reparto());
+			registro.put("itinerario", censo.getItinerario());
 			lastInsert=db.insert(tableName, null, registro);
-			//Cerramos la base de datos
-			// no cerramos por singleton
 		}
 	}
 	public synchronized int actualizar(ContentValues registro,String where, Activity activity){
@@ -71,9 +65,9 @@ public class CensoController {
 		}
 		return registros;
 	}
-	public synchronized ArrayList<Censo> consultar(int pagina, int limite,String condicion, Activity activity){
-        Censo dataSet;
-		ArrayList<Censo> censos =new ArrayList<Censo>();
+	public synchronized ArrayList<Cliente> consultar(int pagina, int limite,String condicion, Activity activity){
+		Cliente dataSet;
+		ArrayList<Cliente> cliente =new ArrayList<Cliente>();
 		Cursor c= null,countCursor = null;
 		SQLiteController usdbh = SQLiteController.getInstance(activity);
 		SQLiteDatabase db = usdbh.getMyWritableDatabase();
@@ -85,7 +79,7 @@ public class CensoController {
 		if(!condicion.equals("")){
 			where=" WHERE "+condicion;
 		}
-		c = db.rawQuery("SELECT * FROM " + tableName + " " + where+" ORDER BY id DESC "+limit, null);
+		c = db.rawQuery("SELECT * FROM " + tableName + " " + where+" "+limit, null);
 		countCursor=db.rawQuery("SELECT count(id) FROM " + tableName + " " + where, null);
 		if (countCursor.moveToFirst()) {
 			do {
@@ -95,33 +89,28 @@ public class CensoController {
 		//System.out.println("Tama�o: "+tamanoConsulta);
 		if (c.moveToFirst()) {
 			do {
-				dataSet = new Censo();
+				dataSet = new Cliente();
 				dataSet.setId(c.getLong(0));
 				dataSet.setCodigo(c.getLong(1));
-				dataSet.setNic(c.getLong(2));
-				dataSet.setFormulario(c.getString(3));
-				dataSet.setDatos(c.getString(4));
-				dataSet.setBarrio(c.getString(5));
-				dataSet.setFk_usuario(c.getInt(6));
-				dataSet.setLast_insert(c.getInt(7));
+				dataSet.setNombre(c.getString(2));
+				dataSet.setDireccion(c.getString(3));
+				dataSet.setNic(c.getLong(4));
+				dataSet.setTipo(c.getString(5));
+				dataSet.setCenso(c.getInt(6));
+				dataSet.setTipo_cliente(c.getString(7));
 				dataSet.setLatitud(c.getString(8));
 				dataSet.setLongitud(c.getString(9));
-				dataSet.setDepartamento(c.getString(10));
-				dataSet.setMunicipio(c.getString(11));
-				dataSet.setCliente(c.getString(12));
-				dataSet.setFecha(c.getString(13));
-				dataSet.setHora(c.getString(14));
-				dataSet.setFk_cliente(c.getInt(15));
-				dataSet.setAcurracy(c.getFloat(16));
+				dataSet.setOrden_reparto(c.getString(10));
+				dataSet.setItinerario(c.getString(11));
 				
 				//System.out.println("Item: " + c.getInt(1) + "Ciente: "+ c.getString(4) + "dir: " + c.getString(5));
-				censos.add(dataSet);
+				cliente.add(dataSet);
 			} while (c.moveToNext());
 		}
 		c.close();
 		countCursor.close();
 		// no cerramos por singleton
-		return censos;
+		return cliente;
 	}
 	public synchronized int count(String condicion, Activity activity){
 		Cursor countCursor = null;
@@ -142,40 +131,12 @@ public class CensoController {
 		return tamanoConsulta;
 	}
 
-	/*acciones para el formulario*/
-	public void eliminarFormulario(Activity activity){
+	public synchronized void eliminarTodo(Activity activity){
 		SQLiteController usdbh = SQLiteController.getInstance(activity);
 		SQLiteDatabase db = usdbh.getMyWritableDatabase();
 		if (db != null) {
-			db.execSQL("DELETE FROM censo_formulario");
+			db.execSQL("DELETE FROM "+tableName);
 		}
 	}
 
-	public synchronized void insertarFormulario(String form, Activity activity) {
-		SQLiteController usdbh = SQLiteController.getInstance(activity);
-		SQLiteDatabase db = usdbh.getMyWritableDatabase();
-
-		if (db != null) {
-			ContentValues registro=new ContentValues();
-			registro.put("formulario", form);
-			db.insert("censo_formulario", null, registro);
-		}
-	}
-
-	public String consultarFormulario(Activity activity){
-		String formulario = "";
-		Cursor c= null;
-		SQLiteController usdbh = SQLiteController.getInstance(activity);
-		SQLiteDatabase db = usdbh.getMyWritableDatabase();
-
-		c = db.rawQuery("SELECT * FROM censo_formulario", null);
-
-		if (c.moveToFirst()) {
-			do {
-				formulario = c.getString(1);
-			} while (c.moveToNext());
-		}
-		c.close();
-		return formulario;
-	}
 }

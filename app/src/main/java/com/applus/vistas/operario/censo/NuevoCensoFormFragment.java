@@ -15,7 +15,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.view.LayoutInflater;
@@ -24,8 +23,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.applus.R;
@@ -37,72 +37,50 @@ import com.applus.modelos.Cliente;
 import com.applus.modelos.SesionSingleton;
 import com.applus.vistas.operario.DialogoGPS;
 import com.applus.vistas.operario.DialogoGPS.OnGPSIntent;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 
-public class CensoFormFragment extends Fragment implements OnCenso, OnGPSIntent {
+public class NuevoCensoFormFragment extends Fragment implements
+		OnCenso, OnGPSIntent, DialogElectrodomesticos.ElectrodomesticosListener,
+		ElectrodomesticosListAdapter.ElectrodomesticoListener{
 
 	ConexionController conexion = new ConexionController();
 
 	Cliente cliente_obj = null;
-	CensoFormFragment listener = null;
+	NuevoCensoFormFragment listener = null;
 
-    ExpandableListView expandableListView;
-    ExpandableListAdapter expandableListAdapter;
-    List<String> expandableListTitle;
-    HashMap<String, List<CensoForm>> expandableListDetail;
+	CensoController censoController = new CensoController();
+
+	EditText nombre, direccion, nic;
+	ListView lista_electrodomesticos;
+	TextView consumo;
+
+	ElectrodomesticosListAdapter electrodomesticosAdapter;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
-		comenzarLocalizacion();
-		View rootView = inflater.inflate(R.layout.fragment_censo, container, false);
 		listener = this;
+		comenzarLocalizacion();
+		View rootView = inflater.inflate(R.layout.fragment_nuevo_censo, container, false);
 
-        expandableListView = rootView.findViewById(R.id.expandableListView);
-        expandableListDetail = ExpandableListDataPump.getData();
-        expandableListTitle = new ArrayList<>(expandableListDetail.keySet());
-        expandableListAdapter = new CustomExpandableListAdapter(getActivity(), expandableListTitle, expandableListDetail);
-        expandableListView.setAdapter(expandableListAdapter);
-        expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+		nombre = (EditText) rootView.findViewById(R.id.nc_nombre);
+		direccion = (EditText) rootView.findViewById(R.id.nc_direccion);
+		nic = (EditText) rootView.findViewById(R.id.nc_nic);
+		consumo = (TextView) rootView.findViewById(R.id.lb_consumo);
 
-            @Override
-            public void onGroupExpand(int groupPosition) {
-                //expandida
-            }
-        });
-
-        expandableListView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
-
-            @Override
-            public void onGroupCollapse(int groupPosition) {
-                //contraida
-
-            }
-        });
-
-        expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v,
-                                        int groupPosition, int childPosition, long id) {
-                Toast.makeText(
-                        getActivity(),
-                        expandableListTitle.get(groupPosition)
-                                + " -> "
-                                + expandableListDetail.get(
-                                expandableListTitle.get(groupPosition)).get(
-                                childPosition).getNombre(), Toast.LENGTH_SHORT
-                ).show();
-                return false;
-            }
-        });
+		lista_electrodomesticos = (ListView) rootView.findViewById(R.id.nc_lista_electrodomesticos);
+		electrodomesticosAdapter = new ElectrodomesticosListAdapter(
+				listener,
+				getActivity(),
+				new ArrayList<CensoForm>());
+		lista_electrodomesticos.setAdapter(electrodomesticosAdapter);
 
 		return rootView;
 	}
@@ -123,7 +101,7 @@ public class CensoFormFragment extends Fragment implements OnCenso, OnGPSIntent 
 		setHasOptionsMenu(true);
 		conexion.callback_censo = this;
 		conexion.setActivity(getActivity());
-		dialogoDinamico("Totalizador");
+		dialogoDinamico("Envio Censo");
 
 	}
 
@@ -139,6 +117,10 @@ public class CensoFormFragment extends Fragment implements OnCenso, OnGPSIntent 
 			case R.id.m_guardar_censo:
 				guardar();
 				return true;
+			case R.id.m_electrodomesticos:
+				DialogFragment df=new DialogElectrodomesticos(listener);
+				df.show(getFragmentManager(), "electrodomesticos");
+				return true;
 			default:
 				break;
 		}
@@ -151,11 +133,16 @@ public class CensoFormFragment extends Fragment implements OnCenso, OnGPSIntent 
 		boolean pasa = true;
 		if (cliente_obj == null) {
             cliente_obj = new Cliente();
-            cliente_obj.setCodigo(Long.parseLong("0"));
+            cliente_obj.setCodigo(0);
+			cliente_obj.setNombre(nombre.getText().toString());
+			cliente_obj.setDireccion(direccion.getText().toString());
+			if (nic.getText().toString().equals("")){
+				nic.setText("0");
+			}
+			cliente_obj.setNic(Long.parseLong(nic.getText().toString()));
             cliente_obj.setBarrio("0");
             cliente_obj.setFk_distrito(0);
             cliente_obj.setFk_municipio(0);
-            cliente_obj.setNombre("NULO");
             cliente_obj.setId(0);
 		}
 		if (pasa) {
@@ -168,7 +155,6 @@ public class CensoFormFragment extends Fragment implements OnCenso, OnGPSIntent 
 	}
 
 	Censo censo;
-	CensoController censoController;
 	long last_insert = 0;
 
 	public void iniciarGuardado(String lat, String lon, String acurracy) {
@@ -192,8 +178,15 @@ public class CensoFormFragment extends Fragment implements OnCenso, OnGPSIntent 
                     censo.setAcurracy(Float.parseFloat(acurracy));
 
                     censo.setCodigo(cliente_obj.getCodigo());
-
+					censo.setNic(cliente_obj.getNic());
                     censo.setBarrio("" + cliente_obj.getFk_barrio());
+					ArrayList<CensoForm> electrodomesticos = electrodomesticosAdapter.getAllData();
+					Gson gsonBuilder = new GsonBuilder().create();
+					String stringJson = gsonBuilder.toJson(electrodomesticos);
+
+					censo.setDatos("{\"nombre\":\""+cliente_obj.getNombre()+"\", \"direccion\":\""+cliente_obj.getDireccion()+"\"}");
+
+					censo.setFormulario(stringJson);
 
 					System.out
 							.println("Operario: "
@@ -250,6 +243,16 @@ public class CensoFormFragment extends Fragment implements OnCenso, OnGPSIntent 
 
 	private void limpiar() {
 		last_insert = 0;
+		nombre.setText("");
+		direccion.setText("");
+		nic.setText("");
+		electrodomesticosAdapter = new ElectrodomesticosListAdapter(
+				listener,
+				getActivity(),
+				new ArrayList<CensoForm>());
+		lista_electrodomesticos.setAdapter(electrodomesticosAdapter);
+		consumo.setText("Total consumo 0 Watts");
+		cliente_obj = null;
 	}
 
 	LocationManager locManager;
@@ -356,7 +359,7 @@ public class CensoFormFragment extends Fragment implements OnCenso, OnGPSIntent 
 		try {
 			json_data = new JSONObject(result);
 			if(json_data.getInt("last_insert")>0){
-				//ingresar el last_insert al totalizador
+				//ingresar el last_insert al censo
 				ContentValues values=new ContentValues();
 				values.put("last_insert", json_data.getInt("last_insert"));
 				int updt=censoController.actualizar(values, "id="+last_insert, getActivity());
@@ -375,7 +378,7 @@ public class CensoFormFragment extends Fragment implements OnCenso, OnGPSIntent 
 					progressDialog.dismiss();
 				}
 				msg = new Message();
-				msg.obj = "La gestion se guardo en el telefono pero no lo recibio el administrador," +
+				msg.obj = "El censo se guardo en el telefono pero no lo recibio el administrador," +
 						" Intenta mas tarde.";
 				handlerDialog.sendMessage(msg);
 				
@@ -443,5 +446,17 @@ public class CensoFormFragment extends Fragment implements OnCenso, OnGPSIntent 
 	public void onSeguirIntentandoGPS() {
 		pasarConPuntoelegido=false;
 		iniciarGuardado(LATITUD,LONGITUD,ACURRACY);
+	}
+
+	@Override
+	public void onAddElectrodomestico(CensoForm item) {
+		item.setCantidad(1);//agregamos +1
+		electrodomesticosAdapter.addToList(item);
+		//Toast.makeText(getActivity(), item.getNombre()+item.getWatts(), Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public void onEventConsumoTotal(int consumoTotal) {
+		consumo.setText("Total consumo "+consumoTotal+" Watts");
 	}
 }

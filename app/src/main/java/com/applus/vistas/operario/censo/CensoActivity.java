@@ -15,7 +15,7 @@ public class CensoActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_censo);
-		fragment = new CensoFormFragment();
+		fragment = new NuevoCensoFormFragment();
 		if (fragment != null) {
 			iniciarFragment(fragment);
 		}

@@ -30,4 +30,8 @@
         <item name="android:typeface">sans</item>
     </style>
 
+    <style name="TextAppearance.Design.Hint" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:textColor">?attr/colorControlActivated</item>
+    </style>
+
 </resources>

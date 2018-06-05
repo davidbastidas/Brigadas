@@ -2,6 +2,7 @@ package com.applus.vistas.operario;
 
 import com.applus.controladores.BrigadaAccionController;
 import com.applus.controladores.BrigadaController;
+import com.applus.controladores.CensoController;
 import com.applus.controladores.ConexionController;
 import com.applus.controladores.DepartamentoController;
 import com.applus.controladores.EstadoTrabajoController;
@@ -30,6 +31,7 @@ import com.applus.modelos.Trabajos;
 import com.applus.vistas.operario.brigada.InterfaceTareasLargas;
 import com.applus.vistas.operario.brigada.OnBrigada;
 import com.applus.vistas.operario.brigada.TareasLargas;
+import com.applus.vistas.operario.censo.OnCenso;
 import com.applus.vistas.operario.novedad.OnNovedad;
 import com.applus.vistas.operario.totalizadores.OnTotalizador;
 
@@ -59,7 +61,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class HomeFragment extends Fragment implements AsyncResponse, InterfaceTareasLargas, OnBrigada, OnTotalizador, OnNovedad{
+public class HomeFragment extends Fragment implements AsyncResponse, InterfaceTareasLargas, OnBrigada, OnTotalizador, OnNovedad, OnCenso {
 	
 	private TextView estado,T_CONS_PROCESO,envio;
 	ConexionController conexion;
@@ -79,6 +81,7 @@ public class HomeFragment extends Fragment implements AsyncResponse, InterfaceTa
 		conexion.callback=this;
 		conexion.callback_totalizador=this;
 		conexion.callback_novedad=this;
+		conexion.callback_censo = this;
 		conexion.setActivity(activity);
 	    mostrarReporte();
         return rootView;
@@ -117,13 +120,16 @@ public class HomeFragment extends Fragment implements AsyncResponse, InterfaceTa
 		BrigadaController or=new BrigadaController();
 		TotalizadorController tot=new TotalizadorController();
 		NovedadController nov=new NovedadController();
+		CensoController cen=new CensoController();
 		T_CONS_PROCESO.setText(
-				"Brigadas Atencion Da�os Realizados= "+or.count("", activity)+"\n"+
-				"Brigadas Atencion Da�os Enviados= "+or.count("last_insert>0", activity)+"\n"+
+				"Brigadas Atencion Daños Realizados= "+or.count("", activity)+"\n"+
+				"Brigadas Atencion Daños Enviados= "+or.count("last_insert>0", activity)+"\n"+
 				"Totalizadores Realizados= "+tot.count("", activity)+"\n"+
 				"Totalizadores Enviados= "+tot.count("last_insert>0", activity)+"\n"+
 				"Novedades Realizados= "+nov.count("", activity)+"\n"+
-				"Novedades Enviados= "+nov.count("last_insert>0", activity)
+				"Novedades Enviados= "+nov.count("last_insert>0", activity)+"\n"+
+				"Censos Realizados= "+cen.count("", activity)+"\n"+
+				"Censos Enviados= "+cen.count("last_insert>0", activity)
 				);
 	}
 	////procesos masivos
@@ -138,24 +144,30 @@ public class HomeFragment extends Fragment implements AsyncResponse, InterfaceTa
 	}
 	@Override
 	public void onEnviarInternetNovedad(String result) {
+		conexion.enviarCensoMasivo();
+	}
+	@Override
+	public void onEnviarInternetCenso(String result) {
+		//termino censo masivo
 		mostrarReporte();
 		envio.setText("");
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String currentDateandTime = sdf.format(new Date());
 		envio.setText("Ultimo Envio: "+currentDateandTime);
-		
+
 		//*/*/*/*//*/
 		SharedPreferences preferencias = getActivity().getSharedPreferences(
 				"configuracion", Context.MODE_PRIVATE);
 		Editor editor = preferencias.edit();
 		editor.putString("estado_envio", envio.getText().toString());
 		editor.commit();
-		
+
 		se.setEstado_envio(envio.getText().toString());
 		/*/*///*/*//*/
-		
+
 		progressDialog.dismiss();
 	}
+
 	@Override
 	public void onConsultaCliente(String output) {
 		// TODO Auto-generated method stub
@@ -475,6 +487,27 @@ public class HomeFragment extends Fragment implements AsyncResponse, InterfaceTa
 				acciones.eliminar("", activity);
 				acciones.insertar(values, activity);
 			}
+
+			estado.setText(estado.getText()+"OK.\n"+"Bajando el formulario de censos...");
+			conexion.getFormularioCenso(""+SesionSingleton.getInstance().getFk_id_operario());
+		} catch (Exception e) {
+			System.out.println("Exception onTablaBrigadaAccion= "+e);
+			estado.setText(estado.getText()+"ERROR.\n"+"Bajando el formulario de censos...");
+			conexion.getFormularioCenso(""+SesionSingleton.getInstance().getFk_id_operario());
+		}
+	}
+
+	@Override
+	public void onDescargarFormularioCenso(String output) {
+		JSONObject json_data;
+		CensoController acciones=new CensoController();
+		try {
+			json_data = new JSONObject(output);
+			JSONArray obs_accion = json_data.getJSONArray("items");
+
+			acciones.eliminarFormulario(activity);
+			acciones.insertarFormulario(output, activity);
+
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String currentDateandTime = sdf.format(new Date());
 			estado.setText(estado.getText()+"OK.\n"+"Ultima Actualizacion: "+currentDateandTime);

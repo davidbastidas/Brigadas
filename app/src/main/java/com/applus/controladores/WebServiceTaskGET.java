@@ -1,6 +1,7 @@
 package com.applus.controladores;
 
 import com.applus.controladores.interfaces.AsyncResponse;
+import com.applus.controladores.interfaces.ClientesInterface;
 import com.applus.modelos.SesionSingleton;
 import com.applus.vistas.operario.novedad.OnNovedad;
 
@@ -36,6 +37,7 @@ public class WebServiceTaskGET extends AsyncTask<String, Void, String> {
 	public OnNovedad delegate_novedad=null;
 	String resultadoFinal="";
 	String accionJava="";
+	public ClientesInterface clienteInterface=null;
 	/*
 	 * param[0] trae el nombre de la funcion
 	 * param[1] trae el nombre del metodo soap
@@ -88,6 +90,12 @@ public class WebServiceTaskGET extends AsyncTask<String, Void, String> {
 			resultado=getNovedadObservacion(params);
 		} else if(accionJava.equals("getBrigadaAccion")){
 			resultado=getBrigadaAccion(params);
+		} else if(accionJava.equals("getFormularioCenso")){
+			resultado=getFormularioCenso(params);
+		} else if(accionJava.equals("getCountClientes")){
+			resultado=getCountClientes(params);
+		} else if(accionJava.equals("getClientes")){
+			resultado=getClientes(params);
 		}
 		
 		return resultado;
@@ -122,6 +130,12 @@ public class WebServiceTaskGET extends AsyncTask<String, Void, String> {
 			delegate.onTablaNovedadObservacion(result);
 		} else if(accionJava.equals("getBrigadaAccion")){
 			delegate.onTablaBrigadaAccion(result);
+		} else if(accionJava.equals("getFormularioCenso")){
+			delegate.onDescargarFormularioCenso(result);
+		} else if(accionJava.equals("getCountClientes")){
+			clienteInterface.onCountClientes(result);
+		} else if(accionJava.equals("getClientes")){
+			clienteInterface.onDescargarClientes(result);
 		}
 		
 	}
@@ -564,10 +578,119 @@ public class WebServiceTaskGET extends AsyncTask<String, Void, String> {
 	    }
 		return respuesta;
 	}
+
+	private String getFormularioCenso(String[] params) {
+		String respuesta="";
+		try {
+			HttpParams httpParams = new BasicHttpParams();
+
+			ConnManagerParams.setTimeout(httpParams, 30000);
+			HttpConnectionParams.setConnectionTimeout(httpParams,30000);
+			HttpConnectionParams.setSoTimeout(httpParams, 30000);
+
+			HttpClient httpClient = new DefaultHttpClient(httpParams);
+			HttpPost httpPost = new HttpPost(NAMESPACE+"controlador=Censo&accion=form_censo");
+
+			// Add your data
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
+					2);
+			nameValuePairs.add(new BasicNameValuePair("user", params[1]));
+			httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			HttpResponse httpResponse = httpClient.execute(httpPost);
+			HttpEntity httpEntity = httpResponse.getEntity();
+
+			if (httpEntity != null) {
+				InputStream inputStream = httpEntity.getContent();
+				if (inputStream != null) {
+					respuesta = leerRespuestaHttp(inputStream);
+				}
+			}
+		} catch (ConnectTimeoutException e) {
+			respuesta = "ConnectTimeoutException: " + e;
+		} catch (Exception e) {
+			respuesta = "Exception: " + e;
+		}
+		return respuesta;
+	}
+
+	private String getCountClientes(String[] params) {
+		String respuesta="";
+		try {
+			HttpParams httpParams = new BasicHttpParams();
+
+			ConnManagerParams.setTimeout(httpParams, 30000);
+			HttpConnectionParams.setConnectionTimeout(httpParams,30000);
+			HttpConnectionParams.setSoTimeout(httpParams, 30000);
+
+			HttpClient httpClient = new DefaultHttpClient(httpParams);
+			HttpPost httpPost = new HttpPost(NAMESPACE+"controlador=Cliente&accion=getCountClientes");
+
+			// Add your data
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
+					2);
+			nameValuePairs.add(new BasicNameValuePair("user", params[1]));
+			nameValuePairs.add(new BasicNameValuePair("tabla", params[2]));
+			nameValuePairs.add(new BasicNameValuePair("id_campo", params[3]));
+			httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			HttpResponse httpResponse = httpClient.execute(httpPost);
+			HttpEntity httpEntity = httpResponse.getEntity();
+
+			if (httpEntity != null) {
+				InputStream inputStream = httpEntity.getContent();
+				if (inputStream != null) {
+					respuesta = leerRespuestaHttp(inputStream);
+				}
+			}
+		} catch (ConnectTimeoutException e) {
+			respuesta = "ConnectTimeoutException: " + e;
+		} catch (Exception e) {
+			respuesta = "Exception: " + e;
+		}
+		return respuesta;
+	}
+
+	private String getClientes(String[] params) {
+		String respuesta="";
+		try {
+			HttpParams httpParams = new BasicHttpParams();
+
+			ConnManagerParams.setTimeout(httpParams, 30000);
+			HttpConnectionParams.setConnectionTimeout(httpParams,30000);
+			HttpConnectionParams.setSoTimeout(httpParams, 30000);
+
+			HttpClient httpClient = new DefaultHttpClient(httpParams);
+			HttpPost httpPost = new HttpPost(NAMESPACE+"controlador=Cliente&accion=clientes_paginados");
+
+			// Add your data
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
+					2);
+			nameValuePairs.add(new BasicNameValuePair("user", params[1]));
+			nameValuePairs.add(new BasicNameValuePair("pagina", params[2]));
+			nameValuePairs.add(new BasicNameValuePair("limit", params[3]));
+			nameValuePairs.add(new BasicNameValuePair("tabla", params[4]));
+			nameValuePairs.add(new BasicNameValuePair("id_campo", params[5]));
+			httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			HttpResponse httpResponse = httpClient.execute(httpPost);
+			HttpEntity httpEntity = httpResponse.getEntity();
+
+			if (httpEntity != null) {
+				InputStream inputStream = httpEntity.getContent();
+				if (inputStream != null) {
+					respuesta = leerRespuestaHttp(inputStream);
+				}
+			}
+		} catch (ConnectTimeoutException e) {
+			respuesta = "ConnectTimeoutException: " + e;
+		} catch (Exception e) {
+			respuesta = "Exception: " + e;
+		}
+		return respuesta;
+	}
 	
 	public String getResultadoFinal() {
 		return resultadoFinal;
 	}
+
 	public String leerRespuestaHttp(InputStream is) {
 		BufferedReader reader = null;
 		try {
