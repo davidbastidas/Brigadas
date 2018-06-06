@@ -10,6 +10,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -17,12 +20,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ActivityCompat;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -42,6 +47,8 @@ import com.google.gson.GsonBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,8 +67,12 @@ public class NuevoCensoFormFragment extends Fragment implements
 	EditText nombre, direccion, nic;
 	ListView lista_electrodomesticos;
 	TextView consumo;
+	SignatureView firma;
+	Button borrarFirma;
 
 	ElectrodomesticosListAdapter electrodomesticosAdapter;
+
+	String firmaString = "";
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -74,6 +85,17 @@ public class NuevoCensoFormFragment extends Fragment implements
 		direccion = (EditText) rootView.findViewById(R.id.nc_direccion);
 		nic = (EditText) rootView.findViewById(R.id.nc_nic);
 		consumo = (TextView) rootView.findViewById(R.id.lb_consumo);
+		firma = (SignatureView) rootView.findViewById(R.id.signature);
+		firma.setSigBackgroundColor(Color.WHITE);
+		firma.setSigColor(Color.BLACK);
+		//firma.setBackgroundResource(R.drawable.imagen1);
+		borrarFirma = (Button) rootView.findViewById(R.id.borrar_firma);
+		borrarFirma.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				firma.clearSignature();
+			}
+		});
 
 		lista_electrodomesticos = (ListView) rootView.findViewById(R.id.nc_lista_electrodomesticos);
 		electrodomesticosAdapter = new ElectrodomesticosListAdapter(
@@ -115,6 +137,8 @@ public class NuevoCensoFormFragment extends Fragment implements
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.m_guardar_censo:
+				Bitmap mySignature = firma.getImage();
+				firmaString = BitMapToString(mySignature);
 				guardar();
 				return true;
 			case R.id.m_electrodomesticos:
@@ -206,6 +230,7 @@ public class NuevoCensoFormFragment extends Fragment implements
 							.format(new Date());
                     censo.setHora(time);
                     censo.setFk_cliente(cliente_obj.getId());
+					censo.setFirma(firmaString);
 
 					censoController.insertar(censo, getActivity());
 					last_insert = censoController.getLastInsert();
@@ -253,6 +278,7 @@ public class NuevoCensoFormFragment extends Fragment implements
 		lista_electrodomesticos.setAdapter(electrodomesticosAdapter);
 		consumo.setText("Total consumo 0 Watts");
 		cliente_obj = null;
+		firma.clearSignature();
 	}
 
 	LocationManager locManager;
@@ -458,5 +484,28 @@ public class NuevoCensoFormFragment extends Fragment implements
 	@Override
 	public void onEventConsumoTotal(int consumoTotal) {
 		consumo.setText("Total consumo "+consumoTotal+" Watts");
+	}
+
+	public String BitMapToString(Bitmap bitmap){
+		ByteArrayOutputStream baos=new  ByteArrayOutputStream();
+		bitmap.compress(Bitmap.CompressFormat.JPEG,30, baos);
+		byte [] b=baos.toByteArray();
+		String temp= Base64.encodeToString(b, Base64.DEFAULT);
+		return temp;
+	}
+
+	/**
+	 * @param encodedString
+	 * @return bitmap (from given string)
+	 */
+	public Bitmap StringToBitMap(String encodedString){
+		try {
+			byte [] encodeByte=Base64.decode(encodedString,Base64.DEFAULT);
+			Bitmap bitmap= BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+			return bitmap;
+		} catch(Exception e) {
+			e.getMessage();
+			return null;
+		}
 	}
 }

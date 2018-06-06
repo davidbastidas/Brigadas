@@ -204,7 +204,8 @@ public class SQLiteController extends SQLiteOpenHelper {
 				" fecha DATE," +
 				" hora TIME," +
 				" fk_cliente INT," +
-				" acurracy VARCHAR(45)" +
+				" acurracy VARCHAR(45)," +
+				" firma TEXT" +
 				")");
 
 		db.execSQL("create table censo_formulario(" +

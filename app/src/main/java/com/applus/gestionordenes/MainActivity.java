@@ -8,11 +8,14 @@ import com.applus.vistas.admin.AdminActivity;
 
 import java.io.File;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.MenuItem;
@@ -21,7 +24,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
-	
+	private static final int REQUEST_CODE_INTERNET = 1;
+	private static final int REQUEST_CODE_STORAGE = 2;
+	private static final int REQUEST_CODE_GPS = 3;
+	private static final int REQUEST_CODE_CAMARA = 4;
+	private static final int REQUEST_CODE_WIFI_STATE = 5;
+
 	Activity activity;
 	EditText T_CONTRASENA, T_USUARIO;
 	boolean PASA_LOGIN;
@@ -38,6 +46,7 @@ public class MainActivity extends Activity {
 		System.out.println(Environment.getExternalStoragePublicDirectory("PAQUETE/ORDENES").getAbsolutePath());
 		*/
 		obtenerPreferenciasDeInicio();
+		checkPermission();
 	}
 
 	/*@Override
@@ -192,5 +201,106 @@ public class MainActivity extends Activity {
 		editor.putString("passwordServicios", "0000");
 		editor.commit();
 	}
-	
+
+	private void checkPermission() {
+
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+			//no es version 6 api 23
+		} else {
+			int hasInternetPermission = checkSelfPermission(Manifest.permission.INTERNET);
+			if (hasInternetPermission != PackageManager.PERMISSION_GRANTED) {
+				requestPermissions(new String[] {Manifest.permission.INTERNET},
+						REQUEST_CODE_INTERNET);
+			}else if (hasInternetPermission == PackageManager.PERMISSION_GRANTED){
+					//con permisos
+			}
+
+			int hasExternalStoragePermission = checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+			if (hasExternalStoragePermission != PackageManager.PERMISSION_GRANTED) {
+				requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
+						REQUEST_CODE_STORAGE);
+			}else if (hasExternalStoragePermission == PackageManager.PERMISSION_GRANTED){
+				//con permisos
+			}
+
+			int hasGPSPermission = checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+			if (hasGPSPermission != PackageManager.PERMISSION_GRANTED) {
+				requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION},
+						REQUEST_CODE_GPS);
+			}else if (hasGPSPermission == PackageManager.PERMISSION_GRANTED){
+				//con permisos
+			}
+
+			int hasCamaraPermission = checkSelfPermission(Manifest.permission.CAMERA);
+			if (hasCamaraPermission != PackageManager.PERMISSION_GRANTED) {
+				requestPermissions(new String[] {Manifest.permission.CAMERA},
+						REQUEST_CODE_CAMARA);
+			}else if (hasCamaraPermission == PackageManager.PERMISSION_GRANTED){
+				//con permisos
+			}
+
+			int hasWifiStatePermission = checkSelfPermission(Manifest.permission.ACCESS_WIFI_STATE);
+			if (hasWifiStatePermission != PackageManager.PERMISSION_GRANTED) {
+				requestPermissions(new String[] {Manifest.permission.ACCESS_WIFI_STATE},
+						REQUEST_CODE_WIFI_STATE);
+			}else if (hasWifiStatePermission == PackageManager.PERMISSION_GRANTED){
+				//con permisos
+			}
+
+		}
+
+		return;
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+		switch (requestCode) {
+			case REQUEST_CODE_INTERNET: {
+				// If request is cancelled, the result arrays are empty.
+				if (grantResults.length > 0
+						&& grantResults[0] ==PackageManager.PERMISSION_GRANTED){
+
+				} else{
+
+				}
+				return;
+			} case REQUEST_CODE_STORAGE: {
+				// If request is cancelled, the result arrays are empty.
+				if (grantResults.length > 0
+						&& grantResults[0] ==PackageManager.PERMISSION_GRANTED){
+
+				} else{
+
+				}
+				return;
+			} case REQUEST_CODE_GPS: {
+				// If request is cancelled, the result arrays are empty.
+				if (grantResults.length > 0
+						&& grantResults[0] ==PackageManager.PERMISSION_GRANTED){
+
+				} else{
+
+				}
+				return;
+			} case REQUEST_CODE_CAMARA: {
+				// If request is cancelled, the result arrays are empty.
+				if (grantResults.length > 0
+						&& grantResults[0] ==PackageManager.PERMISSION_GRANTED){
+
+				} else{
+
+				}
+				return;
+			} case REQUEST_CODE_WIFI_STATE: {
+				// If request is cancelled, the result arrays are empty.
+				if (grantResults.length > 0
+						&& grantResults[0] ==PackageManager.PERMISSION_GRANTED){
+
+				} else{
+
+				}
+				return;
+			}
+		}
+	}
 }

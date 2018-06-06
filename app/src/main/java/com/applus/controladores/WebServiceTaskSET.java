@@ -601,6 +601,8 @@ public class WebServiceTaskSET extends AsyncTask<Object, Void, String> {
 			mainObj.put("usuario", censo.getFk_usuario());
 			mainObj.put("fecha", censo.getFecha());
 			mainObj.put("hora", censo.getHora());
+			mainObj.put("firma", censo.getFirma());
+			Log.i("json masivo",mainObj.toString());
 			try {
 				HttpParams httpParams = new BasicHttpParams();
 
@@ -658,6 +660,7 @@ public class WebServiceTaskSET extends AsyncTask<Object, Void, String> {
 				mainObj.put("usuario", n.getFk_usuario());
 				mainObj.put("fecha", n.getFecha());
 				mainObj.put("hora", n.getHora());
+				mainObj.put("firma", n.getFirma());
 				try {
 					HttpParams httpParams = new BasicHttpParams();
 
@@ -672,7 +675,7 @@ public class WebServiceTaskSET extends AsyncTask<Object, Void, String> {
 					List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
 							2);
 					nameValuePairs.add(new BasicNameValuePair("json", mainObj.toString()));
-					System.out.println("json masivo: "+mainObj.toString());
+
 					nameValuePairs.add(new BasicNameValuePair("user", ""+sesion.getFk_id_operario()));
 					httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 					HttpResponse httpResponse = httpClient.execute(httpPost);

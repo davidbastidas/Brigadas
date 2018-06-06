@@ -16,6 +16,7 @@ public class Censo {
 	String cliente;
 	long fk_cliente;
 	float acurracy;
+	String firma;
 
 	public long getNic() {
 		return nic;
@@ -137,5 +138,13 @@ public class Censo {
 
 	public void setJson(String json) {
 		this.json = json;
+	}
+
+	public String getFirma() {
+		return firma;
+	}
+
+	public void setFirma(String firma) {
+		this.firma = firma;
 	}
 }
