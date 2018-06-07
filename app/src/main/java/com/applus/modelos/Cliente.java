@@ -120,5 +120,9 @@ public class Cliente {
 	public void setFk_barrio(int fk_barrio) {
 		this.fk_barrio = fk_barrio;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "" + nic;
+	}
 }

@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -245,7 +243,15 @@ public class ClientesDescarga extends AppCompatActivity implements ClientesInter
 
 			//eliminando para insertar lo nuevo
 			clieController.eliminarTodo(Activity);
-
+			long foranea = 0;
+			if (busquedaPor.equals("departamento")){
+				foranea = departamentoElegido.getId();
+			}else if (busquedaPor.equals("municipio")){
+				foranea = municipioElegido.getId();
+			}else if (busquedaPor.equals("barrio")){
+				foranea = barrioElegido.getId();
+			}
+			final long forarenaF = foranea;
 			new AsyncTask<Void, Integer, Boolean>(){
 
 				@Override
@@ -255,7 +261,7 @@ public class ClientesDescarga extends AppCompatActivity implements ClientesInter
 							pagina,
 							registrosPorPagina,
 							busquedaPor,
-							departamentoElegido.getId()
+							forarenaF
 					);
 					return true;
 				}
@@ -291,6 +297,8 @@ public class ClientesDescarga extends AppCompatActivity implements ClientesInter
 				c.setLatitud(cli.getString("latitud"));
 				c.setOrden_reparto(cli.getString("orden_reparto"));
 				c.setItinerario(cli.getString("itinerario"));
+				c.setFk_barrio(cli.getInt("fk_barrio"));
+				c.setCodigo(cli.getLong("codigo"));
 
 				clieController.insertar(c, Activity);
 			}

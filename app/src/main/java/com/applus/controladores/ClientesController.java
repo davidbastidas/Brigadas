@@ -5,7 +5,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.applus.modelos.Censo;
 import com.applus.modelos.Cliente;
 
 import java.util.ArrayList;
@@ -40,6 +39,7 @@ public class ClientesController {
 			registro.put("longitud", censo.getLongitud());
 			registro.put("orden_reparto", censo.getOrden_reparto());
 			registro.put("itinerario", censo.getItinerario());
+			registro.put("fk_barrio", censo.getFk_barrio());
 			lastInsert=db.insert(tableName, null, registro);
 		}
 	}
@@ -91,8 +91,8 @@ public class ClientesController {
 			do {
 				dataSet = new Cliente();
 				dataSet.setId(c.getLong(0));
-				dataSet.setCodigo(c.getLong(1));
 				dataSet.setNombre(c.getString(2));
+				dataSet.setCodigo(c.getLong(1));
 				dataSet.setDireccion(c.getString(3));
 				dataSet.setNic(c.getLong(4));
 				dataSet.setTipo(c.getString(5));
@@ -102,6 +102,7 @@ public class ClientesController {
 				dataSet.setLongitud(c.getString(9));
 				dataSet.setOrden_reparto(c.getString(10));
 				dataSet.setItinerario(c.getString(11));
+				dataSet.setFk_barrio(c.getInt(12));
 				
 				//System.out.println("Item: " + c.getInt(1) + "Ciente: "+ c.getString(4) + "dir: " + c.getString(5));
 				cliente.add(dataSet);
@@ -138,5 +139,4 @@ public class ClientesController {
 			db.execSQL("DELETE FROM "+tableName);
 		}
 	}
-
 }

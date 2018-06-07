@@ -71,14 +71,30 @@
         android:text="NIC"
         android:textSize="13sp" />
 
-    <EditText
-        android:id="@+id/nc_nic"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="NIC"
-        android:inputType="number"
-        android:textSize="13sp" />
+        android:layout_weight="0"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/nc_nic"
+            android:layout_width="175dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:enabled="false"
+            android:hint="NIC"
+            android:inputType="number"
+            android:textSize="13sp" />
+
+        <Button
+            android:id="@+id/buscar_nic"
+            android:layout_width="61dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Buscar" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

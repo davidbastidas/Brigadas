@@ -45,7 +45,6 @@ import com.applus.vistas.operario.DialogoGPS.OnGPSIntent;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -55,11 +54,12 @@ import java.util.Date;
 
 public class NuevoCensoFormFragment extends Fragment implements
 		OnCenso, OnGPSIntent, DialogElectrodomesticos.ElectrodomesticosListener,
-		ElectrodomesticosListAdapter.ElectrodomesticoListener{
+		ElectrodomesticosListAdapter.ElectrodomesticoListener, DialogNic.NicListener{
 
 	ConexionController conexion = new ConexionController();
 
 	Cliente cliente_obj = null;
+	Cliente clienteEncontrado = null;
 	NuevoCensoFormFragment listener = null;
 
 	CensoController censoController = new CensoController();
@@ -68,7 +68,7 @@ public class NuevoCensoFormFragment extends Fragment implements
 	ListView lista_electrodomesticos;
 	TextView consumo;
 	SignatureView firma;
-	Button borrarFirma;
+	Button borrarFirma, buscarNic;
 
 	ElectrodomesticosListAdapter electrodomesticosAdapter;
 
@@ -94,6 +94,15 @@ public class NuevoCensoFormFragment extends Fragment implements
 			@Override
 			public void onClick(View v) {
 				firma.clearSignature();
+			}
+		});
+
+		buscarNic = (Button) rootView.findViewById(R.id.buscar_nic);
+		buscarNic.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				DialogFragment df=new DialogNic(listener);
+				df.show(getFragmentManager(), "nic");
 			}
 		});
 
@@ -507,5 +516,11 @@ public class NuevoCensoFormFragment extends Fragment implements
 			e.getMessage();
 			return null;
 		}
+	}
+
+	@Override
+	public void onAddNic(Cliente cliente) {
+		this.clienteEncontrado = cliente;
+		nic.setText("" + cliente.getNic());
 	}
 }
