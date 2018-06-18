@@ -1,6 +1,9 @@
 package com.applus.modelos;
 
-public class Cliente {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Cliente implements Parcelable {
 
 	long id,codigo;
 	String nombre,direccion;
@@ -11,6 +14,67 @@ public class Cliente {
 	String itinerario;
 	int fk_distrito,fk_municipio,fk_barrio;
 	String distrito,municipio,barrio;
+	String censos;
+	public Cliente(){
+		super();
+	}
+
+	public Cliente(Parcel source) {
+		super();
+		this.id = source.readLong();
+		this.codigo = source.readLong();
+		this.nombre = source.readString();
+		this.direccion = source.readString();
+		this.nic = source.readLong();
+		this.tipo = source.readString();
+		this.censo = source.readInt();
+		this.tipo_cliente = source.readString();
+		this.longitud = source.readString();
+		this.latitud = source.readString();
+		this.orden_reparto = source.readString();
+		this.itinerario = source.readString();
+		this.fk_distrito = source.readInt();
+		this.fk_municipio = source.readInt();
+		this.fk_barrio = source.readInt();
+		this.distrito = source.readString();
+		this.municipio = source.readString();
+		this.barrio = source.readString();
+		this.censos = source.readString();
+	}
+	public static final Creator CREATOR = new Creator() {
+		public Cliente createFromParcel(Parcel in) {
+			return new Cliente(in);
+		}
+
+		public Cliente[] newArray(int size) {
+			return new Cliente[size];
+		}
+	};
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeLong(id);
+		dest.writeLong(codigo);
+		dest.writeString(nombre);
+		dest.writeString(direccion);
+		dest.writeLong(nic);
+		dest.writeString(tipo);
+		dest.writeInt(censo);
+		dest.writeString(tipo_cliente);
+		dest.writeString(longitud);
+		dest.writeString(latitud);
+		dest.writeString(orden_reparto);
+		dest.writeString(itinerario);
+		dest.writeInt(fk_distrito);
+		dest.writeInt(fk_municipio);
+		dest.writeInt(fk_barrio);
+		dest.writeString(distrito);
+		dest.writeString(municipio);
+		dest.writeString(barrio);
+		dest.writeString(censos);
+	}
 
 	public String getDistrito() {
 		return distrito;
@@ -119,6 +183,14 @@ public class Cliente {
 	}
 	public void setFk_barrio(int fk_barrio) {
 		this.fk_barrio = fk_barrio;
+	}
+
+	public String getCensos() {
+		return censos;
+	}
+
+	public void setCensos(String censos) {
+		this.censos = censos;
 	}
 
 	@Override

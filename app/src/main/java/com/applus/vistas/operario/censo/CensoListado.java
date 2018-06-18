@@ -95,14 +95,14 @@ public class CensoListado extends AppCompatActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.menu_censo_main, menu);
+		getMenuInflater().inflate(R.menu.menu_censo_lista, menu);
 		return true;
 	}
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar actions click
 		switch (item.getItemId()) {
-		case R.id.mnuevocenso:
+		case R.id.mostrarFormularioCenso:
 			intentar = new Intent(this, CensoActivity.class);
 			startActivity(intentar);
 			return true;

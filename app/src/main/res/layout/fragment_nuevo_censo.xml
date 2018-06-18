@@ -132,6 +132,6 @@
     <ListView
         android:id="@+id/nc_lista_electrodomesticos"
         android:layout_width="match_parent"
-        android:layout_height="230dp"></ListView>
+        android:layout_height="117dp"></ListView>
 
 </LinearLayout>

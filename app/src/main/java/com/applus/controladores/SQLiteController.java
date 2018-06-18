@@ -226,7 +226,8 @@ public class SQLiteController extends SQLiteOpenHelper {
 				" longitud TEXT," +
 				" orden_reparto INTEGER," +
 				" itinerario TEXT," +
-				" fk_barrio INTEGER" +
+				" fk_barrio INTEGER," +
+				" censos TEXT" +
 				")");
 	}
 

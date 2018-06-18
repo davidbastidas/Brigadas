@@ -40,6 +40,7 @@ public class ClientesController {
 			registro.put("orden_reparto", censo.getOrden_reparto());
 			registro.put("itinerario", censo.getItinerario());
 			registro.put("fk_barrio", censo.getFk_barrio());
+			registro.put("censos", censo.getCensos());
 			lastInsert=db.insert(tableName, null, registro);
 		}
 	}
@@ -103,6 +104,7 @@ public class ClientesController {
 				dataSet.setOrden_reparto(c.getString(10));
 				dataSet.setItinerario(c.getString(11));
 				dataSet.setFk_barrio(c.getInt(12));
+				dataSet.setCensos(c.getString(13));
 				
 				//System.out.println("Item: " + c.getInt(1) + "Ciente: "+ c.getString(4) + "dir: " + c.getString(5));
 				cliente.add(dataSet);
@@ -138,5 +140,36 @@ public class ClientesController {
 		if (db != null) {
 			db.execSQL("DELETE FROM "+tableName);
 		}
+	}
+
+	public synchronized Cliente getClienteCodigo(long codigo, Activity activity){
+		Cliente dataSet = null;
+		Cursor c = null;
+		SQLiteController usdbh = SQLiteController.getInstance(activity);
+		SQLiteDatabase db = usdbh.getMyWritableDatabase();
+
+		c = db.rawQuery("SELECT * FROM " + tableName + " WHERE codigo = " + codigo, null);
+		if (c.moveToFirst()) {
+			do {
+				dataSet = new Cliente();
+				dataSet.setId(c.getLong(0));
+				dataSet.setNombre(c.getString(2));
+				dataSet.setCodigo(c.getLong(1));
+				dataSet.setDireccion(c.getString(3));
+				dataSet.setNic(c.getLong(4));
+				dataSet.setTipo(c.getString(5));
+				dataSet.setCenso(c.getInt(6));
+				dataSet.setTipo_cliente(c.getString(7));
+				dataSet.setLatitud(c.getString(8));
+				dataSet.setLongitud(c.getString(9));
+				dataSet.setOrden_reparto(c.getString(10));
+				dataSet.setItinerario(c.getString(11));
+				dataSet.setFk_barrio(c.getInt(12));
+				dataSet.setCensos(c.getString(13));
+			} while (c.moveToNext());
+		}
+		c.close();
+
+		return dataSet;
 	}
 }

@@ -80,6 +80,7 @@ public class NuevoCensoFormFragment extends Fragment implements
 		listener = this;
 		comenzarLocalizacion();
 		View rootView = inflater.inflate(R.layout.fragment_nuevo_censo, container, false);
+		getActivity().setTitle("Nuevo censo");
 
 		nombre = (EditText) rootView.findViewById(R.id.nc_nombre);
 		direccion = (EditText) rootView.findViewById(R.id.nc_direccion);
@@ -113,6 +114,18 @@ public class NuevoCensoFormFragment extends Fragment implements
 				new ArrayList<CensoForm>());
 		lista_electrodomesticos.setAdapter(electrodomesticosAdapter);
 
+		//obteniendo el cliente
+		clienteEncontrado = getArguments().getParcelable("cliente");
+		if(clienteEncontrado != null){
+			nombre.setText(clienteEncontrado.getNombre());
+			direccion.setText(clienteEncontrado.getDireccion());
+			nic.setText("" + clienteEncontrado.getNic());
+
+			nombre.setEnabled(false);
+			direccion.setEnabled(false);
+			nic.setEnabled(false);
+		}
+
 		return rootView;
 	}
 
@@ -138,7 +151,8 @@ public class NuevoCensoFormFragment extends Fragment implements
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		inflater.inflate(R.menu.menu_censo, menu);
+		inflater.inflate(R.menu.menu_nuevo_censo, menu);
+		menu.findItem(R.id.mnuevocenso).setVisible(false);
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 
@@ -166,7 +180,11 @@ public class NuevoCensoFormFragment extends Fragment implements
 		boolean pasa = true;
 		if (cliente_obj == null) {
             cliente_obj = new Cliente();
-            cliente_obj.setCodigo(0);
+            if(clienteEncontrado != null){
+				cliente_obj.setCodigo(clienteEncontrado.getCodigo());
+			}else{
+				cliente_obj.setCodigo(0);
+			}
 			cliente_obj.setNombre(nombre.getText().toString());
 			cliente_obj.setDireccion(direccion.getText().toString());
 			if (nic.getText().toString().equals("")){
@@ -520,7 +538,6 @@ public class NuevoCensoFormFragment extends Fragment implements
 
 	@Override
 	public void onAddNic(Cliente cliente) {
-		this.clienteEncontrado = cliente;
 		nic.setText("" + cliente.getNic());
 	}
 }

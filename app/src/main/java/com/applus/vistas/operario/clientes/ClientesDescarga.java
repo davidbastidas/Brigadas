@@ -299,6 +299,7 @@ public class ClientesDescarga extends AppCompatActivity implements ClientesInter
 				c.setItinerario(cli.getString("itinerario"));
 				c.setFk_barrio(cli.getInt("fk_barrio"));
 				c.setCodigo(cli.getLong("codigo"));
+				c.setCensos(cli.getString("censos"));
 
 				clieController.insertar(c, Activity);
 			}

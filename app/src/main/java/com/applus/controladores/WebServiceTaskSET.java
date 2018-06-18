@@ -602,6 +602,7 @@ public class WebServiceTaskSET extends AsyncTask<Object, Void, String> {
 			mainObj.put("fecha", censo.getFecha());
 			mainObj.put("hora", censo.getHora());
 			mainObj.put("firma", censo.getFirma());
+			mainObj.put("codigo", censo.getCodigo());
 			Log.i("json masivo",mainObj.toString());
 			try {
 				HttpParams httpParams = new BasicHttpParams();
@@ -661,6 +662,7 @@ public class WebServiceTaskSET extends AsyncTask<Object, Void, String> {
 				mainObj.put("fecha", n.getFecha());
 				mainObj.put("hora", n.getHora());
 				mainObj.put("firma", n.getFirma());
+				mainObj.put("codigo", n.getCodigo());
 				try {
 					HttpParams httpParams = new BasicHttpParams();
 

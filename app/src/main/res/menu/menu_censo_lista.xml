@@ -4,9 +4,10 @@
     tools:context="com.applus.vistas.operario.OperarioActivity" >
 
     <item
-        android:id="@+id/mnuevocenso"
+        android:id="@+id/mostrarFormularioCenso"
         android:icon="@mipmap/ic_note_add_white_36dp"
         android:title="Nuevo"
         android:orderInCategory="1"
     	app:showAsAction="ifRoom"/>
+
 </menu>
