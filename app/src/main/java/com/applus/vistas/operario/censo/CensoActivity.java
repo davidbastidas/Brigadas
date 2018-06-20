@@ -12,11 +12,13 @@ import android.view.MenuItem;
 import com.applus.R;
 import com.applus.modelos.Cliente;
 
-public class CensoActivity extends AppCompatActivity implements ActualizarCensoFragment.ActualizarCensoListener{
+public class CensoActivity extends AppCompatActivity implements ActualizarCensoFragment.ActualizarCensoListener, NuevoCensoFormFragment.FirmaListener{
 
+	public static String TAG_NUEVO_CENSO = "NUEVO_CENSO";
 	CensoActivity listener = null;
 	FragmentManager fragmentManager;
 	Fragment fragment = null;
+	Fragment fragmentNuevoCenso = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -30,12 +32,14 @@ public class CensoActivity extends AppCompatActivity implements ActualizarCensoF
 				.replace(R.id.frame_censo_container, fragment).commit();
 	}
 	private void nuevoCensoFragment(Cliente cliente){
-		fragment = new NuevoCensoFormFragment();
+		fragmentNuevoCenso = new NuevoCensoFormFragment(listener);
 		if (fragment != null) {
 			Bundle bundle = new Bundle();
 			bundle.putParcelable("cliente", cliente);
-			fragment.setArguments(bundle);
-			iniciarFragment(fragment);
+			fragmentNuevoCenso.setArguments(bundle);
+			fragmentManager = getFragmentManager();
+			fragmentManager.beginTransaction()
+					.replace(R.id.frame_censo_container, fragmentNuevoCenso, TAG_NUEVO_CENSO).addToBackStack(null).commit();
 		}
 	}
 	private void actualizarCensoFragment(){
@@ -65,6 +69,36 @@ public class CensoActivity extends AppCompatActivity implements ActualizarCensoF
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
+		}
+	}
+
+	@Override
+	public void onPedirFirma() {
+		//llama al fragment para mostrar la ventana de firma
+		fragment = new FirmaFragment(listener);
+		fragmentManager = getFragmentManager();
+		fragmentManager.beginTransaction()
+				.add(R.id.frame_censo_container, fragment).addToBackStack(null).hide(fragmentNuevoCenso).commit();
+	}
+
+	@Override
+	public void onRecibirFirma(String firmaBitMapToString) {
+		System.out.println("Firma recibida");
+		NuevoCensoFormFragment myFragment = (NuevoCensoFormFragment)getFragmentManager().findFragmentByTag(TAG_NUEVO_CENSO);
+		myFragment.setFirmaString(firmaBitMapToString);
+		onBackPressed();
+		/*fragmentManager = getFragmentManager();
+		fragmentManager.beginTransaction()
+				.replace(R.id.frame_censo_container, fragmentNuevoCenso).commit();*/
+	}
+
+	@Override
+	public void onBackPressed(){
+		FragmentManager fm = getFragmentManager();
+		if (fm.getBackStackEntryCount() > 0) {
+			fm.popBackStack();
+		} else {
+			super.onBackPressed();
 		}
 	}
 }

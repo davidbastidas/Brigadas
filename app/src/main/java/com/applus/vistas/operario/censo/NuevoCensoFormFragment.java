@@ -1,6 +1,7 @@
 package com.applus.vistas.operario.censo;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
@@ -27,9 +28,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +44,7 @@ import com.applus.modelos.Censo;
 import com.applus.modelos.CensoForm;
 import com.applus.modelos.Cliente;
 import com.applus.modelos.SesionSingleton;
+import com.applus.modelos.TipoCliente;
 import com.applus.vistas.operario.DialogoGPS;
 import com.applus.vistas.operario.DialogoGPS.OnGPSIntent;
 import com.google.gson.Gson;
@@ -51,11 +56,24 @@ import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
+@SuppressLint("ValidFragment")
 public class NuevoCensoFormFragment extends Fragment implements
 		OnCenso, OnGPSIntent, DialogElectrodomesticos.ElectrodomesticosListener,
 		ElectrodomesticosListAdapter.ElectrodomesticoListener, DialogNic.NicListener{
 
+	private FirmaListener mListener;
+	public interface FirmaListener{
+		public void onPedirFirma();
+		public void onRecibirFirma(String firmaBitMapToString);
+	}
+
+	public NuevoCensoFormFragment(FirmaListener mListener){
+		try{
+			this.mListener = mListener;
+		}catch (ClassCastException e){
+			throw new ClassCastException(mListener.toString() + "implementa el listener");
+		}
+	}
 	ConexionController conexion = new ConexionController();
 
 	Cliente cliente_obj = null;
@@ -67,12 +85,18 @@ public class NuevoCensoFormFragment extends Fragment implements
 	EditText nombre, direccion, nic;
 	ListView lista_electrodomesticos;
 	TextView consumo;
-	SignatureView firma;
-	Button borrarFirma, buscarNic;
+	Button buscarNic, pedirFirma;
+	Spinner listaTipoCliente;
 
 	ElectrodomesticosListAdapter electrodomesticosAdapter;
 
-	String firmaString = "";
+	TipoCliente tipoClienteElegido = null;
+
+	private String firmaString = "";
+
+	public void setFirmaString(String firmaString) {
+		this.firmaString = firmaString;
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -80,56 +104,75 @@ public class NuevoCensoFormFragment extends Fragment implements
 		listener = this;
 		comenzarLocalizacion();
 		View rootView = inflater.inflate(R.layout.fragment_nuevo_censo, container, false);
+
 		getActivity().setTitle("Nuevo censo");
+		if(rootView != null){
+			nombre = (EditText) rootView.findViewById(R.id.nc_nombre);
+			direccion = (EditText) rootView.findViewById(R.id.nc_direccion);
+			nic = (EditText) rootView.findViewById(R.id.nc_nic);
+			consumo = (TextView) rootView.findViewById(R.id.lb_consumo);
+			listaTipoCliente = (Spinner) rootView.findViewById(R.id.listaTipoCliente);
 
-		nombre = (EditText) rootView.findViewById(R.id.nc_nombre);
-		direccion = (EditText) rootView.findViewById(R.id.nc_direccion);
-		nic = (EditText) rootView.findViewById(R.id.nc_nic);
-		consumo = (TextView) rootView.findViewById(R.id.lb_consumo);
-		firma = (SignatureView) rootView.findViewById(R.id.signature);
-		firma.setSigBackgroundColor(Color.WHITE);
-		firma.setSigColor(Color.BLACK);
-		//firma.setBackgroundResource(R.drawable.imagen1);
-		borrarFirma = (Button) rootView.findViewById(R.id.borrar_firma);
-		borrarFirma.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				firma.clearSignature();
+			buscarNic = (Button) rootView.findViewById(R.id.buscar_nic);
+			buscarNic.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					DialogFragment df=new DialogNic(listener);
+					df.show(getFragmentManager(), "nic");
+				}
+			});
+
+			pedirFirma = (Button) rootView.findViewById(R.id.pedirFirma);
+			pedirFirma.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					mListener.onPedirFirma();
+				}
+			});
+
+			lista_electrodomesticos = (ListView) rootView.findViewById(R.id.nc_lista_electrodomesticos);
+			electrodomesticosAdapter = new ElectrodomesticosListAdapter(
+					listener,
+					getActivity(),
+					new ArrayList<CensoForm>());
+			lista_electrodomesticos.setAdapter(electrodomesticosAdapter);
+
+			//obteniendo el cliente
+			clienteEncontrado = getArguments().getParcelable("cliente");
+			if(clienteEncontrado != null){
+				nombre.setText(clienteEncontrado.getNombre());
+				direccion.setText(clienteEncontrado.getDireccion());
+				nic.setText("" + clienteEncontrado.getNic());
+
+				nombre.setEnabled(false);
+				direccion.setEnabled(false);
+				nic.setEnabled(false);
 			}
-		});
 
-		buscarNic = (Button) rootView.findViewById(R.id.buscar_nic);
-		buscarNic.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				DialogFragment df=new DialogNic(listener);
-				df.show(getFragmentManager(), "nic");
-			}
-		});
+			ArrayList<TipoCliente> tipos = new ArrayList<TipoCliente>();
+			tipos.add(new TipoCliente("C","COMERCIAL"));
+			tipos.add(new TipoCliente("R","RESIDENCIAL"));
+			tipos.add(new TipoCliente("I","INDUSTRIAL"));
+			ArrayAdapter<TipoCliente> tiposAdapter = new ArrayAdapter<TipoCliente>(getActivity(),
+					android.R.layout.simple_spinner_item, tipos);
+			tiposAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			listaTipoCliente.setAdapter(tiposAdapter);
+			listaTipoCliente.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+				@Override
+				public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+					tipoClienteElegido = (TipoCliente) parentView.getItemAtPosition(position);
+				}
 
-		lista_electrodomesticos = (ListView) rootView.findViewById(R.id.nc_lista_electrodomesticos);
-		electrodomesticosAdapter = new ElectrodomesticosListAdapter(
-				listener,
-				getActivity(),
-				new ArrayList<CensoForm>());
-		lista_electrodomesticos.setAdapter(electrodomesticosAdapter);
-
-		//obteniendo el cliente
-		clienteEncontrado = getArguments().getParcelable("cliente");
-		if(clienteEncontrado != null){
-			nombre.setText(clienteEncontrado.getNombre());
-			direccion.setText(clienteEncontrado.getDireccion());
-			nic.setText("" + clienteEncontrado.getNic());
-
-			nombre.setEnabled(false);
-			direccion.setEnabled(false);
-			nic.setEnabled(false);
+				@Override
+				public void onNothingSelected(AdapterView<?> parentView) {
+					tipoClienteElegido = null;
+				}
+			});
 		}
-
 		return rootView;
 	}
 
-	//El Fragment ha sido quitado de su Activity y ya no est� disponible
+	//El Fragment ha sido quitado de su Activity y ya no esta disponible
 	@Override
 	public void onDetach() {
 		if (locListener != null) {
@@ -160,8 +203,6 @@ public class NuevoCensoFormFragment extends Fragment implements
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.m_guardar_censo:
-				Bitmap mySignature = firma.getImage();
-				firmaString = BitMapToString(mySignature);
 				guardar();
 				return true;
 			case R.id.m_electrodomesticos:
@@ -195,6 +236,10 @@ public class NuevoCensoFormFragment extends Fragment implements
             cliente_obj.setFk_distrito(0);
             cliente_obj.setFk_municipio(0);
             cliente_obj.setId(0);
+		}
+		if(tipoClienteElegido == null){
+			pasa = false;
+			motivo = "Debe elegir el tipo de cliente";
 		}
 		if (pasa) {
 			iniciarGuardado(LATITUD, LONGITUD, ACURRACY);
@@ -258,6 +303,7 @@ public class NuevoCensoFormFragment extends Fragment implements
                     censo.setHora(time);
                     censo.setFk_cliente(cliente_obj.getId());
 					censo.setFirma(firmaString);
+					censo.setTipoCliente(tipoClienteElegido.getTag());
 
 					censoController.insertar(censo, getActivity());
 					last_insert = censoController.getLastInsert();
@@ -305,7 +351,8 @@ public class NuevoCensoFormFragment extends Fragment implements
 		lista_electrodomesticos.setAdapter(electrodomesticosAdapter);
 		consumo.setText("Total consumo 0 Watts");
 		cliente_obj = null;
-		firma.clearSignature();
+		tipoClienteElegido = null;
+		listaTipoCliente.setAdapter(null);
 	}
 
 	LocationManager locManager;

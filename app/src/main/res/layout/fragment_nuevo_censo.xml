@@ -96,31 +96,20 @@
             android:text="Buscar" />
     </LinearLayout>
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/textView14"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_marginTop="5dp"
+        android:text="Tipo de Cliente"
+        android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/textView14"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Firma del Cliente"
-            android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/borrar_firma"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Borrar Firma" />
-    </LinearLayout>
-
-    <com.applus.vistas.operario.censo.SignatureView
-        android:id="@+id/signature"
+    <Spinner
+        android:id="@+id/listaTipoCliente"
         android:layout_width="match_parent"
-        android:layout_height="103dp"></com.applus.vistas.operario.censo.SignatureView>
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:padding="3dp" />
 
     <TextView
         android:id="@+id/lb_consumo"
@@ -132,6 +121,15 @@
     <ListView
         android:id="@+id/nc_lista_electrodomesticos"
         android:layout_width="match_parent"
-        android:layout_height="117dp"></ListView>
+        android:layout_height="134dp"
+        android:layout_weight="0"></ListView>
+
+    <Button
+        android:id="@+id/pedirFirma"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_weight="0"
+        android:text="Presione para Firmar" />
 
 </LinearLayout>

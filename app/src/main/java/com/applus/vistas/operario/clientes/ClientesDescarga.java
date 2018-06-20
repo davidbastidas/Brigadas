@@ -56,7 +56,7 @@ public class ClientesDescarga extends AppCompatActivity implements ClientesInter
 	String busquedaPor = "";
 	long totalPaginas = 0;
 	long contadorPaginas = 0;
-	long registrosPorPagina = 100;
+	long registrosPorPagina = 1000;
 	long pagina = 0;
 
 	//dialogo

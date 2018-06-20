@@ -17,6 +17,15 @@ public class Censo {
 	long fk_cliente;
 	float acurracy;
 	String firma;
+	String tipoCliente;
+
+	public String getTipoCliente() {
+		return tipoCliente;
+	}
+
+	public void setTipoCliente(String tipoCliente) {
+		this.tipoCliente = tipoCliente;
+	}
 
 	public long getNic() {
 		return nic;
