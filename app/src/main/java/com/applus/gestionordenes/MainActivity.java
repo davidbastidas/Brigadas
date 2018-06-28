@@ -24,11 +24,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
-	private static final int REQUEST_CODE_INTERNET = 1;
-	private static final int REQUEST_CODE_STORAGE = 2;
-	private static final int REQUEST_CODE_GPS = 3;
-	private static final int REQUEST_CODE_CAMARA = 4;
-	private static final int REQUEST_CODE_WIFI_STATE = 5;
 
 	Activity activity;
 	EditText T_CONTRASENA, T_USUARIO;
@@ -161,6 +156,29 @@ public class MainActivity extends Activity {
 		SharedPreferences preferencias = getSharedPreferences("configuracion",
 				Context.MODE_PRIVATE);
 		SesionSingleton sesion = SesionSingleton.getInstance();
+		Editor editor = preferencias.edit();
+		if(preferencias.getString("ip", "").equals("")){
+			editor.putString("ip", "181.48.232.226:8087");
+		}
+		if(preferencias.getString("proyecto", "").equals("")){
+			editor.putString("proyecto", "appme");
+		}
+		if(preferencias.getString("memoria", "").equals("")){
+			editor.putString("memoria", "sdcard0");
+		}
+		if(preferencias.getString("vista", "").equals("")){
+			editor.putString("vista", "1");
+		}
+		if(preferencias.getString("ckinternet", "").equals("")){
+			editor.putString("ckinternet", "1");
+		}
+		if(preferencias.getString("orden_realizado", "").equals("")){
+			editor.putString("orden_realizado", "0");
+		}
+		editor.commit();
+
+		preferencias = getSharedPreferences("configuracion",
+				Context.MODE_PRIVATE);
 		sesion.setIP(preferencias.getString("ip", ""));
 		sesion.setPROYECTO(preferencias.getString("proyecto", ""));
 		String almacenamiento = preferencias.getString("memoria", "");
@@ -207,46 +225,26 @@ public class MainActivity extends Activity {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
 			//no es version 6 api 23
 		} else {
-			int hasInternetPermission = checkSelfPermission(Manifest.permission.INTERNET);
-			if (hasInternetPermission != PackageManager.PERMISSION_GRANTED) {
-				requestPermissions(new String[] {Manifest.permission.INTERNET},
-						REQUEST_CODE_INTERNET);
-			}else if (hasInternetPermission == PackageManager.PERMISSION_GRANTED){
-					//con permisos
-			}
+			int permsRequestCode = 100;
+			String[] perms = {
+					Manifest.permission.INTERNET,
+					Manifest.permission.WRITE_EXTERNAL_STORAGE,
+					Manifest.permission.ACCESS_FINE_LOCATION,
+					Manifest.permission.CAMERA
+			};
+			int accessInternetPermission = checkSelfPermission(Manifest.permission.INTERNET);
+			int accessWiteExternalPermission = checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+			int accessFinePermission = checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+			int cameraPermission = checkSelfPermission(Manifest.permission.CAMERA);
 
-			int hasExternalStoragePermission = checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-			if (hasExternalStoragePermission != PackageManager.PERMISSION_GRANTED) {
-				requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
-						REQUEST_CODE_STORAGE);
-			}else if (hasExternalStoragePermission == PackageManager.PERMISSION_GRANTED){
-				//con permisos
+			if (accessInternetPermission == PackageManager.PERMISSION_GRANTED &&
+					accessWiteExternalPermission == PackageManager.PERMISSION_GRANTED &&
+					accessFinePermission == PackageManager.PERMISSION_GRANTED &&
+					cameraPermission == PackageManager.PERMISSION_GRANTED) {
+				//se realiza metodo si es necesario...
+			} else {
+				requestPermissions(perms, permsRequestCode);
 			}
-
-			int hasGPSPermission = checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
-			if (hasGPSPermission != PackageManager.PERMISSION_GRANTED) {
-				requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION},
-						REQUEST_CODE_GPS);
-			}else if (hasGPSPermission == PackageManager.PERMISSION_GRANTED){
-				//con permisos
-			}
-
-			int hasCamaraPermission = checkSelfPermission(Manifest.permission.CAMERA);
-			if (hasCamaraPermission != PackageManager.PERMISSION_GRANTED) {
-				requestPermissions(new String[] {Manifest.permission.CAMERA},
-						REQUEST_CODE_CAMARA);
-			}else if (hasCamaraPermission == PackageManager.PERMISSION_GRANTED){
-				//con permisos
-			}
-
-			int hasWifiStatePermission = checkSelfPermission(Manifest.permission.ACCESS_WIFI_STATE);
-			if (hasWifiStatePermission != PackageManager.PERMISSION_GRANTED) {
-				requestPermissions(new String[] {Manifest.permission.ACCESS_WIFI_STATE},
-						REQUEST_CODE_WIFI_STATE);
-			}else if (hasWifiStatePermission == PackageManager.PERMISSION_GRANTED){
-				//con permisos
-			}
-
 		}
 
 		return;
@@ -255,52 +253,9 @@ public class MainActivity extends Activity {
 	@Override
 	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
 		switch (requestCode) {
-			case REQUEST_CODE_INTERNET: {
-				// If request is cancelled, the result arrays are empty.
-				if (grantResults.length > 0
-						&& grantResults[0] ==PackageManager.PERMISSION_GRANTED){
-
-				} else{
-
-				}
-				return;
-			} case REQUEST_CODE_STORAGE: {
-				// If request is cancelled, the result arrays are empty.
-				if (grantResults.length > 0
-						&& grantResults[0] ==PackageManager.PERMISSION_GRANTED){
-
-				} else{
-
-				}
-				return;
-			} case REQUEST_CODE_GPS: {
-				// If request is cancelled, the result arrays are empty.
-				if (grantResults.length > 0
-						&& grantResults[0] ==PackageManager.PERMISSION_GRANTED){
-
-				} else{
-
-				}
-				return;
-			} case REQUEST_CODE_CAMARA: {
-				// If request is cancelled, the result arrays are empty.
-				if (grantResults.length > 0
-						&& grantResults[0] ==PackageManager.PERMISSION_GRANTED){
-
-				} else{
-
-				}
-				return;
-			} case REQUEST_CODE_WIFI_STATE: {
-				// If request is cancelled, the result arrays are empty.
-				if (grantResults.length > 0
-						&& grantResults[0] ==PackageManager.PERMISSION_GRANTED){
-
-				} else{
-
-				}
-				return;
-			}
+			case 100:
+				// accion o metodo realizar
+				break;
 		}
 	}
 }

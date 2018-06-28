@@ -128,7 +128,7 @@ public class DialogNic extends DialogFragment {
 				barrioElegido = (Barrio) parentView.getItemAtPosition(position);
 				//llenando los nics
 				ClientesController clieController = new ClientesController();
-				ArrayList<Cliente> clientes = clieController.consultar(0, 0, "fk_barrio=" + barrioElegido.getId(), getActivity());
+				ArrayList<Cliente> clientes = clieController.consultar(0, 0, "fk_barrio=" + barrioElegido.getId() + " GROUP BY nic ", getActivity());
 
 				ArrayAdapter<Cliente> clienteAdapter = new ArrayAdapter<Cliente>(getActivity(),
 						android.R.layout.simple_spinner_item, clientes);

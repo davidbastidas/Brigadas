@@ -100,6 +100,15 @@ public class FirmaFragment extends Fragment{
 	}
 
 	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.menu_nuevo_censo, menu);
+		menu.findItem(R.id.mnuevocenso).setVisible(false);
+		menu.findItem(R.id.m_electrodomesticos).setVisible(false);
+		menu.findItem(R.id.m_guardar_censo).setVisible(false);
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+
+	@Override
 	public void onDetach() {
 		super.onDetach();
 	}
