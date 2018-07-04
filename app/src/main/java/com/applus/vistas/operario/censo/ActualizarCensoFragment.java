@@ -45,6 +45,8 @@ public class ActualizarCensoFragment extends Fragment{
 
 	Cliente clienteEncontrado = null;
 
+	private boolean puedeActualizar = true;
+
 	public ActualizarCensoFragment(ActualizarCensoListener mListener){
 		try{
 			this.mListener = mListener;
@@ -87,8 +89,14 @@ public class ActualizarCensoFragment extends Fragment{
 								item.put("fecha", cen.getString("fecha"));
 								if(Integer.parseInt(cen.getString("estado")) == 0){
 									estado = "No aplicado";
+									if(i == 0){
+										puedeActualizar = false;
+									}
 								}else{
 									estado = "Aplicado";
+									if(i == 0){
+										puedeActualizar = true;
+									}
 								}
 								item.put("usuario", "Censador : " + cen.getString("usuario") + " - Estado: " + estado);
 								array.add(item);
@@ -109,13 +117,15 @@ public class ActualizarCensoFragment extends Fragment{
 		irActualizarCenso.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (clienteEncontrado != null){
-					mListener.onActualizarCenso(clienteEncontrado);
+				if(puedeActualizar){
+					if (clienteEncontrado != null){
+						mListener.onActualizarCenso(clienteEncontrado);
+					}else{
+						Toast.makeText(getActivity(), "Busque primero un cliente", Toast.LENGTH_SHORT).show();
+					}
 				}else{
-					Toast.makeText(getActivity(), "Busque primero un cliente", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getActivity(), "No puede actualizar porque hay un censo No Aplicado.", Toast.LENGTH_LONG).show();
 				}
-
-
 			}
 		});
 		listaCensos = (ListView) rootView.findViewById(R.id.lista_censos);

@@ -7,7 +7,7 @@ public class CensoForm {
     private String items;
     private String watts;
     private int cantidad;
-    private int consumo;
+    private float consumo;
 
     public String getTipo() {
         return tipo;
@@ -49,11 +49,11 @@ public class CensoForm {
         this.cantidad = cantidad;
     }
 
-    public int getConsumo() {
+    public float getConsumo() {
         return consumo;
     }
 
-    public void setConsumo(int consumo) {
+    public void setConsumo(float consumo) {
         this.consumo = consumo;
     }
 

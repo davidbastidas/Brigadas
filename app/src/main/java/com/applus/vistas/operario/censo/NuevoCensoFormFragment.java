@@ -556,8 +556,8 @@ public class NuevoCensoFormFragment extends Fragment implements
 	}
 
 	@Override
-	public void onEventConsumoTotal(int consumoTotal) {
-		consumo.setText("Total consumo "+consumoTotal+" Watts");
+	public void onEventConsumoTotal(float consumoTotal) {
+		consumo.setText("Total consumo "+Math.round(consumoTotal*100.0)/100.0+" Watts");
 	}
 
 	public String BitMapToString(Bitmap bitmap){

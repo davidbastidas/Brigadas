@@ -26,7 +26,7 @@ import java.util.ArrayList;
 public class ElectrodomesticosListAdapter extends BaseAdapter {
 
     public interface ElectrodomesticoListener{
-        public void onEventConsumoTotal(int consumo);
+        public void onEventConsumoTotal(float consumo);
     }
     ElectrodomesticoListener mlistener;
 	private final Activity actividad;
@@ -37,7 +37,7 @@ public class ElectrodomesticosListAdapter extends BaseAdapter {
 	TextView nombre, descripcion, cantidad;
 	Button remove, add;
 
-	int totalCenso = 0;
+	float totalCenso = 0;
 
 	public ElectrodomesticosListAdapter(ElectrodomesticoListener listener, Activity actividad, ArrayList<CensoForm> items){
 		super();
@@ -56,7 +56,7 @@ public class ElectrodomesticosListAdapter extends BaseAdapter {
 			}
 		}
 		if (nuevo){
-		    int consumo = Integer.parseInt(item.getWatts()) * item.getCantidad();
+		    float consumo = Float.parseFloat(item.getWatts()) * item.getCantidad();
 		    item.setConsumo(consumo);
             totalCenso += item.getConsumo();
             mlistener.onEventConsumoTotal(totalCenso);
@@ -90,11 +90,11 @@ public class ElectrodomesticosListAdapter extends BaseAdapter {
 				ArrayList<CensoForm> items2 = new ArrayList<>(items);
 				int cantidad = items2.get(positionRemove).getCantidad() -1;
 
-                int consumo = Integer.parseInt(items2.get(positionRemove).getWatts()) * cantidad;
+                float consumo = Float.parseFloat(items2.get(positionRemove).getWatts()) * cantidad;
                 if(consumo > 0){
                     items2.get(positionRemove).setConsumo(consumo);
                 }
-                totalCenso = totalCenso - Integer.parseInt(items2.get(positionRemove).getWatts());
+                totalCenso = totalCenso - Float.parseFloat(items2.get(positionRemove).getWatts());
 
 				if(cantidad == 0){
 					items2.remove(positionRemove);
@@ -117,9 +117,9 @@ public class ElectrodomesticosListAdapter extends BaseAdapter {
 				int cantidad = items2.get(positionAdd).getCantidad() + 1;
 				items2.get(positionAdd).setCantidad(cantidad);
 
-                int consumo = Integer.parseInt(items2.get(positionAdd).getWatts()) * items2.get(positionAdd).getCantidad();
+                float consumo = Float.parseFloat(items2.get(positionAdd).getWatts()) * items2.get(positionAdd).getCantidad();
                 items2.get(positionAdd).setConsumo(consumo);
-                totalCenso += Integer.parseInt(items2.get(positionAdd).getWatts());
+                totalCenso += Float.parseFloat(items2.get(positionAdd).getWatts());
 
 				items = items2;
 				notifyDataSetChanged();//refresca la nueva lista

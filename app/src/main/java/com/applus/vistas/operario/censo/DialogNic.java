@@ -77,7 +77,7 @@ public class DialogNic extends DialogFragment {
 		});
 
 		DepartamentoController dep = new DepartamentoController();
-		ArrayList<Departamento> departamentos = dep.consultar(0, 0, "", getActivity());
+		ArrayList<Departamento> departamentos = dep.consultar(0, 0, "id>0 ORDER BY nombre ", getActivity());
 		ArrayAdapter<Departamento> departamentoAdapter = new ArrayAdapter<Departamento>(getActivity(),
 				android.R.layout.simple_spinner_item, departamentos);
 		departamentoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -89,7 +89,7 @@ public class DialogNic extends DialogFragment {
 
 				//llenando los municipios
 				MunicipioController mun = new MunicipioController();
-				ArrayList<Municipio> municipios = mun.consultar(0, 0, "fk_departamento=" + departamentoElegido.getId(), getActivity());
+				ArrayList<Municipio> municipios = mun.consultar(0, 0, "fk_departamento=" + departamentoElegido.getId() + " ORDER BY nombre ", getActivity());
 				ArrayAdapter<Municipio> municipioAdapter = new ArrayAdapter<Municipio>(getActivity(),
 						android.R.layout.simple_spinner_item, municipios);
 				municipioAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -109,7 +109,7 @@ public class DialogNic extends DialogFragment {
 
 				//llenando los barrios
 				BarrioController barr = new BarrioController();
-				ArrayList<Barrio> barrios = barr.consultar(0, 0, "fk_municipio=" + municipioElegido.getId(), getActivity());
+				ArrayList<Barrio> barrios = barr.consultar(0, 0, "fk_municipio=" + municipioElegido.getId() + " ORDER BY nombre ", getActivity());
 				ArrayAdapter<Barrio> barrioAdapter = new ArrayAdapter<Barrio>(getActivity(),
 						android.R.layout.simple_spinner_item, barrios);
 				barrioAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

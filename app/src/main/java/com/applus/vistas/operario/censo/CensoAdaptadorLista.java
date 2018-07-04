@@ -40,7 +40,12 @@ public class CensoAdaptadorLista extends BaseAdapter {
 		view = inflater.inflate(R.layout.vista_lista_general1, null, true);
 
 		titulo = (TextView) view.findViewById(R.id.t_numero);
-		titulo.setText("Censo con NIC: "+censos.get(position).getNic());
+		if(censos.get(position).getCodigo() == 0){
+			titulo.setText("Censo nuevo NIC: "+censos.get(position).getNic());
+		}else{
+			titulo.setText("Censo CODIGO: "+censos.get(position).getCodigo());
+		}
+
 		
 		subtitulo = (TextView) view.findViewById(R.id.t_tipo_id_tipo);
 		subtitulo.setText("");

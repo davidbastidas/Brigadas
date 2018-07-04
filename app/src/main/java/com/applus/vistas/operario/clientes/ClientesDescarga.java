@@ -111,7 +111,7 @@ public class ClientesDescarga extends AppCompatActivity implements ClientesInter
 
 				//llenando los barrios
 				BarrioController barr = new BarrioController();
-				ArrayList<Barrio> barrios = barr.consultar(0, 0, "fk_municipio=" + municipioElegido.getId(), Activity);
+				ArrayList<Barrio> barrios = barr.consultar(0, 0, "fk_municipio=" + municipioElegido.getId() + " ORDER BY nombre", Activity);
 				ArrayAdapter<Barrio> barrioAdapter = new ArrayAdapter<Barrio>(Activity,
 						android.R.layout.simple_spinner_item, barrios);
 				barrioAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -237,8 +237,8 @@ public class ClientesDescarga extends AppCompatActivity implements ClientesInter
 		System.out.println("onCountClientes: "+result);
 		try {
 			JSONObject obj = new JSONObject(result);
-			totalPaginas = Long.parseLong(obj.getString("total")) / registrosPorPagina;
-			totalPaginas = (long) Math.ceil(totalPaginas);
+			float paginas = Float.parseFloat(obj.getString("total")) / registrosPorPagina;
+			totalPaginas = (long) Math.ceil(paginas);
 			System.out.println("total clientes: "+obj.getString("total"));
 
 			//eliminando para insertar lo nuevo
@@ -267,7 +267,7 @@ public class ClientesDescarga extends AppCompatActivity implements ClientesInter
 				}
 			}.execute();
 
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			dialogo.dismiss();
 			Toast.makeText(Activity, "Ocurrio un problema leyendo los clientes", Toast.LENGTH_LONG).show();
 			e.printStackTrace();
@@ -303,8 +303,8 @@ public class ClientesDescarga extends AppCompatActivity implements ClientesInter
 
 				clieController.insertar(c, Activity);
 			}
-		} catch (JSONException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			System.out.println("error guardando cliente" + e);
 		} finally {
 			//actualizar estado de la barra
 
@@ -314,6 +314,15 @@ public class ClientesDescarga extends AppCompatActivity implements ClientesInter
 			if(contadorPaginas < totalPaginas){
 				//volvemos a pedir mas clientes
 				pagina = pagina + registrosPorPagina;
+				long foranea = 0;
+				if (busquedaPor.equals("departamento")){
+					foranea = departamentoElegido.getId();
+				}else if (busquedaPor.equals("municipio")){
+					foranea = municipioElegido.getId();
+				}else if (busquedaPor.equals("barrio")){
+					foranea = barrioElegido.getId();
+				}
+				final long forarenaF = foranea;
 				new AsyncTask<Void, Integer, Boolean>(){
 
 					@Override
@@ -323,7 +332,7 @@ public class ClientesDescarga extends AppCompatActivity implements ClientesInter
 								pagina,
 								registrosPorPagina,
 								busquedaPor,
-								departamentoElegido.getId()
+								forarenaF
 						);
 						return true;
 					}
