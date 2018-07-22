@@ -206,7 +206,9 @@ public class SQLiteController extends SQLiteOpenHelper {
 				" fk_cliente INT," +
 				" acurracy VARCHAR(45)," +
 				" firma TEXT," +
-				" tipo TEXT" +
+				" tipo TEXT," +
+				" foto TEXT," +
+				" observacion TEXT" +
 				")");
 
 		db.execSQL("create table censo_formulario(" +
@@ -228,7 +230,18 @@ public class SQLiteController extends SQLiteOpenHelper {
 				" orden_reparto INTEGER," +
 				" itinerario TEXT," +
 				" fk_barrio INTEGER," +
-				" censos TEXT" +
+				" censos TEXT," +
+				" reporte TEXT" +
+				")");
+		db.execSQL("create table cliente_actualizar(" +
+				" id INTEGER PRIMARY KEY AUTOINCREMENT," +
+				" codigo INTEGER," +
+				" nombre TEXT," +
+				" direccion TEXT," +
+				" nic INTEGER," +
+				" tipo_cliente TEXT," +
+				" reporte TEXT," +
+				" last_insert INT" +
 				")");
 	}
 

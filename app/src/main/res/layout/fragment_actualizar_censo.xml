@@ -24,7 +24,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="3dp"
-                android:text="Si no se trata de una actualizacion de censo, presione 'Nuevo censo' en la barra"
+                android:text="Si no se trata de una actualizacion de censo, presione 'Censo Nuevo Usuario' en la barra"
                 android:textAllCaps="false"
                 android:textSize="16dp"
                 android:textStyle="bold|italic" />

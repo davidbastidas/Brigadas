@@ -46,6 +46,8 @@ public class CensoController {
 			registro.put("datos", censo.getDatos());
 			registro.put("firma", censo.getFirma());
 			registro.put("tipo", censo.getTipoCliente());
+			registro.put("foto", censo.getFotoSoporte());
+			registro.put("observacion", censo.getObservaciones());
 			lastInsert=db.insert(tableName, null, registro);
 			//Cerramos la base de datos
 			// no cerramos por singleton
@@ -117,6 +119,8 @@ public class CensoController {
 				dataSet.setAcurracy(c.getFloat(16));
 				dataSet.setFirma(c.getString(17));
 				dataSet.setTipoCliente(c.getString(18));
+				dataSet.setFotoSoporte(c.getString(19));
+				dataSet.setObservaciones(c.getString(20));
 				
 				//System.out.println("Item: " + c.getInt(1) + "Ciente: "+ c.getString(4) + "dir: " + c.getString(5));
 				censos.add(dataSet);

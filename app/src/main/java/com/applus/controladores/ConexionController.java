@@ -1,6 +1,16 @@
 package com.applus.controladores;
-import com.applus.controladores.interfaces.AsyncResponse;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.ContentValues;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
+import android.widget.Toast;
+
 import com.applus.R;
+import com.applus.controladores.interfaces.AsyncResponse;
 import com.applus.controladores.interfaces.ClientesInterface;
 import com.applus.modelos.BrigadaMaterialParcelable;
 import com.applus.modelos.BrigadaParcelable;
@@ -13,27 +23,18 @@ import com.applus.modelos.Usuario;
 import com.applus.vistas.operario.OperarioActivity;
 import com.applus.vistas.operario.brigada.OnBrigada;
 import com.applus.vistas.operario.censo.OnCenso;
+import com.applus.vistas.operario.clientes.OnCliente;
 import com.applus.vistas.operario.novedad.OnNovedad;
 import com.applus.vistas.operario.totalizadores.OnTotalizador;
+
+import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.json.JSONObject;
-
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.ContentValues;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Handler;
-import android.os.Message;
-import android.widget.Toast;
-
-public class ConexionController implements AsyncResponse,OnBrigada,OnTotalizador,OnNovedad, OnCenso, ClientesInterface {
+public class ConexionController implements AsyncResponse,OnBrigada,OnTotalizador,OnNovedad, OnCenso, ClientesInterface, OnCliente {
 	
 	public AsyncResponse callback_get=null;
 	public OnBrigada callback=null;
@@ -41,6 +42,7 @@ public class ConexionController implements AsyncResponse,OnBrigada,OnTotalizador
 	public OnNovedad callback_novedad=null;
 	public OnCenso callback_censo=null;
 	public ClientesInterface clienteInterface = null;
+	public OnCliente callback_cliente=null;
 	Activity activity;
 	SesionSingleton sesion;
 	String user="";
@@ -250,6 +252,22 @@ public class ConexionController implements AsyncResponse,OnBrigada,OnTotalizador
 	public void onEnviarInternetNovedad(String result) {
 		System.out.println("onEnviarInternetNovedad= "+result);
 		callback_novedad.onEnviarInternetNovedad(result);
+	}
+
+	public void enviarClientesAActualizar(){
+		String accionJava = "enviarClientesAActualizar";
+		WebServiceTaskSET asyncTask = new WebServiceTaskSET();
+		asyncTask.callback_cliente = this;
+		asyncTask.execute(new Object[] {
+				accionJava,
+				activity
+		});
+	}
+
+	@Override
+	public void onEnviarInternetCliente(String result) {
+		System.out.println("onEnviarInternetCliente= "+result);
+		callback_cliente.onEnviarInternetCliente(result);
 	}
 	
 	public void getTrabajos(String user){

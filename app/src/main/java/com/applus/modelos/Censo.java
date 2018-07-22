@@ -18,9 +18,27 @@ public class Censo {
 	float acurracy;
 	String firma;
 	String tipoCliente;
+	String fotoSoporte;
+	String observaciones;
 
 	public String getTipoCliente() {
 		return tipoCliente;
+	}
+
+	public String getFotoSoporte() {
+		return fotoSoporte;
+	}
+
+	public String getObservaciones() {
+		return observaciones;
+	}
+
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
+	}
+
+	public void setFotoSoporte(String fotoSoporte) {
+		this.fotoSoporte = fotoSoporte;
 	}
 
 	public void setTipoCliente(String tipoCliente) {

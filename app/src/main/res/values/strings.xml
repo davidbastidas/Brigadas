@@ -67,7 +67,9 @@
     <string name="title_activity_censo_form">Nuevo Censo</string>
     <string name="title_activity_censo">Censo</string>
     <string name="title_activity_clientes">Clientes</string>
-    
+
     <string name="title_activity_mapa">Mapa</string>
+    <string name="title_activity_menu_clientes">Menu de Clientes</string>
+    <string name="title_activity_actualizar_clientes">Actualizar Cliente</string>
 
 </resources>

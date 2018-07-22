@@ -41,6 +41,7 @@ public class ClientesController {
 			registro.put("itinerario", censo.getItinerario());
 			registro.put("fk_barrio", censo.getFk_barrio());
 			registro.put("censos", censo.getCensos());
+			registro.put("reporte", censo.getReporte());
 			lastInsert=db.insert(tableName, null, registro);
 		}
 	}
@@ -105,6 +106,7 @@ public class ClientesController {
 				dataSet.setItinerario(c.getString(11));
 				dataSet.setFk_barrio(c.getInt(12));
 				dataSet.setCensos(c.getString(13));
+				dataSet.setReporte(c.getString(14));
 				
 				//System.out.println("Item: " + c.getInt(1) + "Ciente: "+ c.getString(4) + "dir: " + c.getString(5));
 				cliente.add(dataSet);
@@ -166,10 +168,86 @@ public class ClientesController {
 				dataSet.setItinerario(c.getString(11));
 				dataSet.setFk_barrio(c.getInt(12));
 				dataSet.setCensos(c.getString(13));
+				dataSet.setReporte(c.getString(14));
 			} while (c.moveToNext());
 		}
 		c.close();
 
 		return dataSet;
+	}
+
+	public synchronized void insertarClienteActualizar(Cliente cliente, Activity activity) {
+		SQLiteController usdbh = SQLiteController.getInstance(activity);
+		SQLiteDatabase db = usdbh.getMyWritableDatabase();
+		// Si hemos abierto correctamente la base de datos
+		if (db != null) {
+			ContentValues registro=new ContentValues();
+			registro.put("codigo", cliente.getCodigo());
+			registro.put("nombre", cliente.getNombre());
+			registro.put("direccion", cliente.getDireccion());
+			registro.put("nic", cliente.getNic());
+			registro.put("tipo_cliente", cliente.getTipo_cliente());
+			registro.put("reporte", cliente.getReporte());
+			registro.put("last_insert", 0);
+			lastInsert=db.insert("cliente_actualizar", null, registro);
+		}
+	}
+
+	public synchronized ArrayList<Cliente> getClientesAActualizar(Activity activity){
+		Cliente dataSet;
+		ArrayList<Cliente> cliente =new ArrayList<Cliente>();
+		Cursor c= null;
+		SQLiteController usdbh = SQLiteController.getInstance(activity);
+		SQLiteDatabase db = usdbh.getMyWritableDatabase();
+		c = db.rawQuery("SELECT * FROM cliente_actualizar WHERE last_insert = 0", null);
+
+		if (c.moveToFirst()) {
+			do {
+				dataSet = new Cliente();
+				dataSet.setId(c.getLong(0));
+				dataSet.setCodigo(c.getLong(1));
+				dataSet.setNombre(c.getString(2));
+				dataSet.setDireccion(c.getString(3));
+				dataSet.setNic(c.getLong(4));
+				dataSet.setTipo_cliente(c.getString(5));
+				dataSet.setReporte(c.getString(6));
+				cliente.add(dataSet);
+			} while (c.moveToNext());
+		}
+		c.close();
+		// no cerramos por singleton
+		return cliente;
+	}
+
+	public synchronized int countAActualizar(String condicion, Activity activity){
+		Cursor countCursor = null;
+		SQLiteController usdbh = SQLiteController.getInstance(activity);
+		SQLiteDatabase db = usdbh.getMyWritableDatabase();
+		String where="";
+		if(!condicion.equals("")){
+			where=" WHERE "+condicion;
+		}
+		countCursor=db.rawQuery("SELECT count(id) FROM cliente_actualizar " + where, null);
+		if (countCursor.moveToFirst()) {
+			do {
+				tamanoConsulta=countCursor.getInt(0);
+			} while (countCursor.moveToNext());
+		}
+		countCursor.close();
+		// no cerramos por singleton
+		return tamanoConsulta;
+	}
+
+	public synchronized int actualizarClienteActualizar(ContentValues registro,String where, Activity activity){
+		int actualizados = 0;
+		// Abrimos la base de datos 'db_ordenes' en modo escritura
+		SQLiteController usdbh = SQLiteController.getInstance(activity);
+		SQLiteDatabase db = usdbh.getMyWritableDatabase();
+		// Si hemos abierto correctamente la base de datos
+		if (db != null) {
+			actualizados = db.update("cliente_actualizar", registro, where, null);
+		}
+		// no cerramos por singleton
+		return actualizados;
 	}
 }

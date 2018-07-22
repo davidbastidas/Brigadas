@@ -105,6 +105,7 @@ public class FirmaFragment extends Fragment{
 		menu.findItem(R.id.mnuevocenso).setVisible(false);
 		menu.findItem(R.id.m_electrodomesticos).setVisible(false);
 		menu.findItem(R.id.m_guardar_censo).setVisible(false);
+		menu.findItem(R.id.m_foto_soporte).setVisible(false);
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.applus">
 
@@ -20,57 +21,66 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
-            android:name="com.applus.gestionordenes.MainActivity"
+            android:name=".gestionordenes.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name="com.applus.vistas.operario.OperarioActivity"
+            android:name=".vistas.operario.OperarioActivity"
             android:label="@string/title_activity_operario"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.applus.vistas.admin.AdminActivity"
-            android:label="@string/title_activity_admin"></activity>
+            android:name=".vistas.admin.AdminActivity"
+            android:label="@string/title_activity_admin" />
         <activity
-            android:name="com.applus.vistas.operario.brigada.BrigadaActivity"
+            android:name=".vistas.operario.brigada.BrigadaActivity"
             android:label="@string/title_activity_brigada_form"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.applus.vistas.operario.brigada.BrigadaListado"
+            android:name=".vistas.operario.brigada.BrigadaListado"
             android:label="@string/title_activity_brigada"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.applus.vistas.operario.totalizadores.TotalizadoresActivity"
+            android:name=".vistas.operario.totalizadores.TotalizadoresActivity"
             android:label="@string/title_activity_totalizador_form"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.applus.vistas.operario.totalizadores.TotalizadorListado"
+            android:name=".vistas.operario.totalizadores.TotalizadorListado"
             android:label="@string/title_activity_totalizador"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.applus.vistas.operario.novedad.NovedadActivity"
+            android:name=".vistas.operario.novedad.NovedadActivity"
             android:label="@string/title_activity_novedad"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.applus.vistas.operario.novedad.NovedadListado"
+            android:name=".vistas.operario.novedad.NovedadListado"
             android:label="@string/title_activity_novedad_form"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.applus.vistas.operario.censo.CensoActivity"
+            android:name=".vistas.operario.censo.CensoActivity"
             android:label="@string/title_activity_censo_form"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.applus.vistas.operario.censo.CensoListado"
+            android:name=".vistas.operario.censo.CensoListado"
             android:label="@string/title_activity_censo"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.applus.vistas.operario.clientes.ClientesDescarga"
+            android:name=".vistas.operario.clientes.ClientesDescarga"
             android:label="@string/title_activity_clientes"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".vistas.operario.clientes.MenuClientes"
+            android:label="@string/title_activity_menu_clientes"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".vistas.operario.clientes.ActualizarCliente"
+            android:label="@string/title_activity_actualizar_clientes"
+            android:screenOrientation="portrait"/>
     </application>
+
 </manifest>

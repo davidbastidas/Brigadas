@@ -1,47 +1,5 @@
 package com.applus.vistas.operario;
 
-import com.applus.controladores.BrigadaAccionController;
-import com.applus.controladores.BrigadaController;
-import com.applus.controladores.CensoController;
-import com.applus.controladores.ConexionController;
-import com.applus.controladores.DepartamentoController;
-import com.applus.controladores.EstadoTrabajoController;
-import com.applus.controladores.MaterialController;
-import com.applus.controladores.MunicipioController;
-import com.applus.controladores.NovedadController;
-import com.applus.controladores.NovedadObservacionController;
-import com.applus.controladores.NovedadTipoController;
-import com.applus.controladores.TotalizadorController;
-import com.applus.controladores.TotalizadorEstadoMedidaController;
-import com.applus.controladores.TotalizadorObservacionController;
-import com.applus.controladores.TrabajosController;
-import com.applus.controladores.interfaces.AsyncResponse;
-import com.applus.R;
-import com.applus.modelos.BrigadaAccion;
-import com.applus.modelos.Departamento;
-import com.applus.modelos.EstadoTrabajo;
-import com.applus.modelos.Material;
-import com.applus.modelos.Municipio;
-import com.applus.modelos.NovedadObservacion;
-import com.applus.modelos.NovedadTipo;
-import com.applus.modelos.SesionSingleton;
-import com.applus.modelos.TotalizadorEstadoMedida;
-import com.applus.modelos.TotalizadorObservaciones;
-import com.applus.modelos.Trabajos;
-import com.applus.vistas.operario.brigada.InterfaceTareasLargas;
-import com.applus.vistas.operario.brigada.OnBrigada;
-import com.applus.vistas.operario.brigada.TareasLargas;
-import com.applus.vistas.operario.censo.OnCenso;
-import com.applus.vistas.operario.novedad.OnNovedad;
-import com.applus.vistas.operario.totalizadores.OnTotalizador;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
@@ -61,7 +19,51 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class HomeFragment extends Fragment implements AsyncResponse, InterfaceTareasLargas, OnBrigada, OnTotalizador, OnNovedad, OnCenso {
+import com.applus.R;
+import com.applus.controladores.BrigadaAccionController;
+import com.applus.controladores.BrigadaController;
+import com.applus.controladores.CensoController;
+import com.applus.controladores.ClientesController;
+import com.applus.controladores.ConexionController;
+import com.applus.controladores.DepartamentoController;
+import com.applus.controladores.EstadoTrabajoController;
+import com.applus.controladores.MaterialController;
+import com.applus.controladores.MunicipioController;
+import com.applus.controladores.NovedadController;
+import com.applus.controladores.NovedadObservacionController;
+import com.applus.controladores.NovedadTipoController;
+import com.applus.controladores.TotalizadorController;
+import com.applus.controladores.TotalizadorEstadoMedidaController;
+import com.applus.controladores.TotalizadorObservacionController;
+import com.applus.controladores.TrabajosController;
+import com.applus.controladores.interfaces.AsyncResponse;
+import com.applus.modelos.BrigadaAccion;
+import com.applus.modelos.Departamento;
+import com.applus.modelos.EstadoTrabajo;
+import com.applus.modelos.Material;
+import com.applus.modelos.Municipio;
+import com.applus.modelos.NovedadObservacion;
+import com.applus.modelos.NovedadTipo;
+import com.applus.modelos.SesionSingleton;
+import com.applus.modelos.TotalizadorEstadoMedida;
+import com.applus.modelos.TotalizadorObservaciones;
+import com.applus.modelos.Trabajos;
+import com.applus.vistas.operario.brigada.InterfaceTareasLargas;
+import com.applus.vistas.operario.brigada.OnBrigada;
+import com.applus.vistas.operario.brigada.TareasLargas;
+import com.applus.vistas.operario.censo.OnCenso;
+import com.applus.vistas.operario.clientes.OnCliente;
+import com.applus.vistas.operario.novedad.OnNovedad;
+import com.applus.vistas.operario.totalizadores.OnTotalizador;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
+public class HomeFragment extends Fragment implements AsyncResponse, InterfaceTareasLargas, OnBrigada, OnTotalizador, OnNovedad, OnCenso, OnCliente {
 	
 	private TextView estado,T_CONS_PROCESO,envio;
 	ConexionController conexion;
@@ -82,6 +84,7 @@ public class HomeFragment extends Fragment implements AsyncResponse, InterfaceTa
 		conexion.callback_totalizador=this;
 		conexion.callback_novedad=this;
 		conexion.callback_censo = this;
+		conexion.callback_cliente = this;
 		conexion.setActivity(activity);
 	    mostrarReporte();
         return rootView;
@@ -121,6 +124,7 @@ public class HomeFragment extends Fragment implements AsyncResponse, InterfaceTa
 		TotalizadorController tot=new TotalizadorController();
 		NovedadController nov=new NovedadController();
 		CensoController cen=new CensoController();
+		ClientesController cliente = new ClientesController();
 		T_CONS_PROCESO.setText(
 				"Brigadas Atencion Daños Realizados= "+or.count("", activity)+"\n"+
 				"Brigadas Atencion Daños Enviados= "+or.count("last_insert>0", activity)+"\n"+
@@ -129,7 +133,9 @@ public class HomeFragment extends Fragment implements AsyncResponse, InterfaceTa
 				"Novedades Realizados= "+nov.count("", activity)+"\n"+
 				"Novedades Enviados= "+nov.count("last_insert>0", activity)+"\n"+
 				"Censos Realizados= "+cen.count("", activity)+"\n"+
-				"Censos Enviados= "+cen.count("last_insert>0", activity)
+				"Censos Enviados= "+cen.count("last_insert>0", activity) +"\n"+
+				"Clientes Actualizados= "+cliente.countAActualizar("", activity)+"\n"+
+				"Clientes Actualizados Enviados= "+cliente.countAActualizar("last_insert>0", activity)
 				);
 	}
 	////procesos masivos
@@ -148,6 +154,10 @@ public class HomeFragment extends Fragment implements AsyncResponse, InterfaceTa
 	}
 	@Override
 	public void onEnviarInternetCenso(String result) {
+		conexion.enviarClientesAActualizar();
+	}
+	@Override
+	public void onEnviarInternetCliente(String result) {
 		//termino censo masivo
 		mostrarReporte();
 		envio.setText("");

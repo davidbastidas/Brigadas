@@ -15,6 +15,7 @@ public class Cliente implements Parcelable {
 	int fk_distrito,fk_municipio,fk_barrio;
 	String distrito,municipio,barrio;
 	String censos;
+	String reporte;
 	public Cliente(){
 		super();
 	}
@@ -40,6 +41,7 @@ public class Cliente implements Parcelable {
 		this.municipio = source.readString();
 		this.barrio = source.readString();
 		this.censos = source.readString();
+		this.reporte = source.readString();
 	}
 	public static final Creator CREATOR = new Creator() {
 		public Cliente createFromParcel(Parcel in) {
@@ -74,6 +76,15 @@ public class Cliente implements Parcelable {
 		dest.writeString(municipio);
 		dest.writeString(barrio);
 		dest.writeString(censos);
+		dest.writeString(reporte);
+	}
+
+	public String getReporte() {
+		return reporte;
+	}
+
+	public void setReporte(String reporte) {
+		this.reporte = reporte;
 	}
 
 	public String getDistrito() {

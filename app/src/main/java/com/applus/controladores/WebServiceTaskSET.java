@@ -1,24 +1,24 @@
 package com.applus.controladores;
 
+import android.app.Activity;
+import android.content.ContentValues;
+import android.os.AsyncTask;
+import android.util.Log;
+import android.widget.TextView;
+
 import com.applus.modelos.BrigadaMaterialParcelable;
 import com.applus.modelos.BrigadaParcelable;
 import com.applus.modelos.BrigadaTrabajoParcelable;
 import com.applus.modelos.Censo;
+import com.applus.modelos.Cliente;
 import com.applus.modelos.Novedades;
 import com.applus.modelos.SesionSingleton;
 import com.applus.modelos.Totalizadores;
 import com.applus.vistas.operario.brigada.OnBrigada;
 import com.applus.vistas.operario.censo.OnCenso;
+import com.applus.vistas.operario.clientes.OnCliente;
 import com.applus.vistas.operario.novedad.OnNovedad;
 import com.applus.vistas.operario.totalizadores.OnTotalizador;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -36,11 +36,13 @@ import org.apache.http.params.HttpParams;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import android.app.Activity;
-import android.content.ContentValues;
-import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.TextView;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WebServiceTaskSET extends AsyncTask<Object, Void, String> {
 	
@@ -48,6 +50,7 @@ public class WebServiceTaskSET extends AsyncTask<Object, Void, String> {
 	public OnTotalizador callback_totalizador=null;
 	public OnNovedad callback_novedad=null;
 	public OnCenso callback_censo=null;
+	public OnCliente callback_cliente = null;
 	
 	String resultadoFinal="";
 	String nombreFuncion="";
@@ -93,6 +96,8 @@ public class WebServiceTaskSET extends AsyncTask<Object, Void, String> {
 			resultado=enviarCenso(params);
 		}else if(nombreFuncion.equals("enviarCensoMasivo")){
 			resultado=enviarCensoMasivo(params);
+		}else if(nombreFuncion.equals("enviarClientesAActualizar")){
+			resultado=enviarClientesAActualizar(params);
 		}
 		
 		return resultado;
@@ -117,6 +122,8 @@ public class WebServiceTaskSET extends AsyncTask<Object, Void, String> {
 			callback_censo.onEnviarInternetCenso(result);
 		}else if(nombreFuncion.equals("enviarCensoMasivo")){
 			callback_censo.onEnviarInternetCenso(result);
+		}else if(nombreFuncion.equals("enviarClientesAActualizar")){
+			callback_cliente.onEnviarInternetCliente(result);
 		}
 	}
 	
@@ -604,6 +611,8 @@ public class WebServiceTaskSET extends AsyncTask<Object, Void, String> {
 			mainObj.put("tipo", censo.getTipoCliente());
 			mainObj.put("firma", censo.getFirma());
 			mainObj.put("codigo", censo.getCodigo());
+			mainObj.put("foto", censo.getFotoSoporte());
+			mainObj.put("observaciones", censo.getObservaciones());
 
 			Log.i("json masivo",mainObj.toString());
 			try {
@@ -666,6 +675,8 @@ public class WebServiceTaskSET extends AsyncTask<Object, Void, String> {
 				mainObj.put("tipo", n.getTipoCliente());
 				mainObj.put("firma", n.getFirma());
 				mainObj.put("codigo", n.getCodigo());
+				mainObj.put("foto", n.getFotoSoporte());
+				mainObj.put("observaciones", n.getObservaciones());
 
 				System.out.println(mainObj.toString());
 				try {
@@ -715,6 +726,74 @@ public class WebServiceTaskSET extends AsyncTask<Object, Void, String> {
 			e.printStackTrace();
 		}
 		respuesta=cont+" Novedades Actualizadas";
+		return resultadoFinal=respuesta;
+	}
+
+	private String enviarClientesAActualizar(Object... params){
+		String respuesta="";
+		Activity activity=(Activity) params[1];
+		ArrayList<Cliente> clientes= null;
+		ClientesController cen=new ClientesController();
+		clientes=cen.getClientesAActualizar(activity);
+		int cont=0;
+		try {
+			for (Cliente n : clientes) {
+				JSONObject mainObj = new JSONObject();
+				mainObj.put("codigo", n.getCodigo());
+				mainObj.put("nombre", n.getNombre());
+				mainObj.put("direccion", n.getDireccion());
+				mainObj.put("nic", n.getNic());
+				mainObj.put("tipo", n.getTipo_cliente());
+				mainObj.put("reporte", n.getReporte());
+
+				System.out.println("JSON clientes: " + mainObj.toString());
+				try {
+					HttpParams httpParams = new BasicHttpParams();
+
+					ConnManagerParams.setTimeout(httpParams, 30000);
+					HttpConnectionParams.setConnectionTimeout(httpParams,30000);
+					HttpConnectionParams.setSoTimeout(httpParams, 30000);
+
+					HttpClient httpClient = new DefaultHttpClient(httpParams);
+					HttpPost httpPost = new HttpPost(NAMESPACE+"controlador=Cliente&accion=insertar_actualizar");
+
+					// Add your data
+					List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
+							2);
+					nameValuePairs.add(new BasicNameValuePair("json", mainObj.toString()));
+
+					nameValuePairs.add(new BasicNameValuePair("user", ""+sesion.getFk_id_operario()));
+					httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+					HttpResponse httpResponse = httpClient.execute(httpPost);
+					HttpEntity httpEntity = httpResponse.getEntity();
+
+					if (httpEntity != null) {
+						InputStream inputStream = httpEntity.getContent();
+						if (inputStream != null) {
+							respuesta = leerRespuestaHttp(inputStream);
+							System.out.println("resp servidor cliente actualizar: "+respuesta);
+							//convertir a json y actualizar
+							JSONObject json_data = new JSONObject(respuesta);
+							if(json_data.getInt("last_insert")>0){
+								ContentValues value=new ContentValues();
+								value.put("last_insert", json_data.getInt("last_insert"));
+								cen.actualizarClienteActualizar(value, "id="+n.getId(), activity);
+								cont++;
+							}
+						}
+					}
+				} catch (ConnectTimeoutException e) {
+					respuesta = "ConnectTimeoutException: " + e;
+				} catch (Exception e) {
+					respuesta = "Exception: " + e;
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("Exception, clientes a actualizar= "+e);
+			System.out.println(Thread.currentThread().getStackTrace()[1]);
+			e.printStackTrace();
+		}
+		respuesta=cont+" Clientes Actualizados";
 		return resultadoFinal=respuesta;
 	}
 	

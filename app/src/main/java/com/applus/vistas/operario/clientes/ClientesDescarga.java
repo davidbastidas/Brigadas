@@ -29,7 +29,6 @@ import com.applus.modelos.Municipio;
 import com.applus.modelos.SesionSingleton;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -300,7 +299,11 @@ public class ClientesDescarga extends AppCompatActivity implements ClientesInter
 				c.setFk_barrio(cli.getInt("fk_barrio"));
 				c.setCodigo(cli.getLong("codigo"));
 				c.setCensos(cli.getString("censos"));
-
+				if(cli.has("reporte")){
+					c.setReporte(cli.getString("reporte"));
+				}else{
+					c.setReporte("");
+				}
 				clieController.insertar(c, Activity);
 			}
 		} catch (Exception e) {

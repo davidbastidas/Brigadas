@@ -2,6 +2,7 @@ package com.applus.vistas.operario.censo;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
@@ -13,19 +14,20 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -82,7 +84,7 @@ public class NuevoCensoFormFragment extends Fragment implements
 
 	CensoController censoController = new CensoController();
 
-	EditText nombre, direccion, nic;
+	EditText nombre, direccion, nic, observaciones;
 	ListView lista_electrodomesticos;
 	TextView consumo;
 	Button buscarNic, pedirFirma;
@@ -93,6 +95,8 @@ public class NuevoCensoFormFragment extends Fragment implements
 	TipoCliente tipoClienteElegido = null;
 
 	private String firmaString = "";
+
+	private String fotoSoporte = "";
 
 	public void setFirmaString(String firmaString) {
 		this.firmaString = firmaString;
@@ -110,6 +114,7 @@ public class NuevoCensoFormFragment extends Fragment implements
 			nombre = (EditText) rootView.findViewById(R.id.nc_nombre);
 			direccion = (EditText) rootView.findViewById(R.id.nc_direccion);
 			nic = (EditText) rootView.findViewById(R.id.nc_nic);
+			observaciones = (EditText) rootView.findViewById(R.id.nc_observaciones);
 			consumo = (TextView) rootView.findViewById(R.id.lb_consumo);
 			listaTipoCliente = (Spinner) rootView.findViewById(R.id.listaTipoCliente);
 
@@ -136,6 +141,15 @@ public class NuevoCensoFormFragment extends Fragment implements
 					getActivity(),
 					new ArrayList<CensoForm>());
 			lista_electrodomesticos.setAdapter(electrodomesticosAdapter);
+			lista_electrodomesticos.setOnTouchListener(new View.OnTouchListener() {
+				// Setting on Touch Listener for handling the touch inside ScrollView
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					// Disallow the touch request for parent scroll on touch of child view
+					v.getParent().requestDisallowInterceptTouchEvent(true);
+					return false;
+				}
+			});
 
 			//obteniendo el cliente
 			clienteEncontrado = getArguments().getParcelable("cliente");
@@ -147,6 +161,7 @@ public class NuevoCensoFormFragment extends Fragment implements
 				nombre.setEnabled(false);
 				direccion.setEnabled(false);
 				nic.setEnabled(false);
+				getActivity().setTitle("Actualización de censo");
 			}
 
 			ArrayList<TipoCliente> tipos = new ArrayList<TipoCliente>();
@@ -209,6 +224,9 @@ public class NuevoCensoFormFragment extends Fragment implements
 				DialogFragment df=new DialogElectrodomesticos(listener);
 				df.show(getFragmentManager(), "electrodomesticos");
 				return true;
+			case R.id.m_foto_soporte:
+				takePhoto();
+				return true;
 			default:
 				break;
 		}
@@ -237,9 +255,34 @@ public class NuevoCensoFormFragment extends Fragment implements
             cliente_obj.setFk_municipio(0);
             cliente_obj.setId(0);
 		}
+		if(fotoSoporte.equals("")){
+			pasa = false;
+			motivo = "Debe tomar una foto de soporte";
+		}
+		if(nombre.getText().toString().trim().equals("")){
+			pasa = false;
+			motivo = "Debe ingresar el nombre";
+		}
+		if(direccion.getText().toString().trim().equals("")){
+			pasa = false;
+			motivo = "Debe ingresar la direccion";
+		}
+		if(nic.getText().toString().trim().equals("")){
+			pasa = false;
+			motivo = "Debe ingresar el NIC";
+		}
 		if(tipoClienteElegido == null){
 			pasa = false;
 			motivo = "Debe elegir el tipo de cliente";
+		}
+		if(lista_electrodomesticos.getAdapter().isEmpty()){
+			pasa = false;
+			motivo = "Debe elegir algun electrodomestico";
+		}
+
+		if(firmaString.equals("")){
+			pasa = false;
+			motivo = "Debe firmar el censo";
 		}
 		if (pasa) {
 			iniciarGuardado(LATITUD, LONGITUD, ACURRACY);
@@ -304,6 +347,8 @@ public class NuevoCensoFormFragment extends Fragment implements
                     censo.setFk_cliente(cliente_obj.getId());
 					censo.setFirma(firmaString);
 					censo.setTipoCliente(tipoClienteElegido.getTag());
+					censo.setFotoSoporte(fotoSoporte);
+					censo.setObservaciones(observaciones.getText().toString());
 
 					censoController.insertar(censo, getActivity());
 					last_insert = censoController.getLastInsert();
@@ -586,5 +631,35 @@ public class NuevoCensoFormFragment extends Fragment implements
 	@Override
 	public void onAddNic(Cliente cliente) {
 		nic.setText("" + cliente.getNic());
+	}
+
+	private void takePhoto(){
+		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		startActivityForResult(intent, 1888);
+
+	}
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data){
+		super.onActivityResult(requestCode, resultCode, data);
+		switch (requestCode){
+			case 1888:
+				System.out.println("recibe");
+				if (resultCode == Activity.RESULT_OK){
+					Bitmap bmp = (Bitmap) data.getExtras().get("data");;
+					ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+					bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+					byte[] byteArray = stream.toByteArray();
+
+					// convert byte array to Bitmap
+
+					Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0,
+                            byteArray.length);
+					fotoSoporte = BitMapToString(bitmap);
+					System.out.println("foto soporte");
+
+				}
+				break;
+		}
 	}
 }
