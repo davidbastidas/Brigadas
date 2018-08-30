@@ -10,7 +10,7 @@ import com.applus.modelos.BrigadaMaterialParcelable;
 import com.applus.modelos.BrigadaParcelable;
 import com.applus.modelos.BrigadaTrabajoParcelable;
 import com.applus.modelos.Censo;
-import com.applus.modelos.Cliente;
+import com.applus.modelos.ClienteAActualizar;
 import com.applus.modelos.Novedades;
 import com.applus.modelos.SesionSingleton;
 import com.applus.modelos.Totalizadores;
@@ -614,7 +614,7 @@ public class WebServiceTaskSET extends AsyncTask<Object, Void, String> {
 			mainObj.put("foto", censo.getFotoSoporte());
 			mainObj.put("observaciones", censo.getObservaciones());
 
-			Log.i("json masivo",mainObj.toString());
+			Log.i("json unico",mainObj.toString());
 			try {
 				HttpParams httpParams = new BasicHttpParams();
 
@@ -732,21 +732,22 @@ public class WebServiceTaskSET extends AsyncTask<Object, Void, String> {
 	private String enviarClientesAActualizar(Object... params){
 		String respuesta="";
 		Activity activity=(Activity) params[1];
-		ArrayList<Cliente> clientes= null;
+		ArrayList<ClienteAActualizar> clientes= null;
 		ClientesController cen=new ClientesController();
 		clientes=cen.getClientesAActualizar(activity);
 		int cont=0;
 		try {
-			for (Cliente n : clientes) {
+			for (ClienteAActualizar n : clientes) {
 				JSONObject mainObj = new JSONObject();
 				mainObj.put("codigo", n.getCodigo());
-				mainObj.put("nombre", n.getNombre());
-				mainObj.put("direccion", n.getDireccion());
-				mainObj.put("nic", n.getNic());
-				mainObj.put("tipo", n.getTipo_cliente());
-				mainObj.put("reporte", n.getReporte());
+				mainObj.put("campo", n.getCampo());
+				mainObj.put("dato_anterior", n.getDatoAnterior());
+				mainObj.put("dato_actual", n.getDatoActual());
+				mainObj.put("usuario", n.getFkUsuario());
+				mainObj.put("aplicado", n.getEsAplicado());
+				mainObj.put("fecha", n.getFecha());
 
-				System.out.println("JSON clientes: " + mainObj.toString());
+				System.out.println("JSON clientes actualizar: " + mainObj.toString());
 				try {
 					HttpParams httpParams = new BasicHttpParams();
 

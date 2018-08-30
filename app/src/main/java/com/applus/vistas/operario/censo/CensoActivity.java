@@ -1,9 +1,7 @@
 package com.applus.vistas.operario.censo;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -15,6 +13,7 @@ import com.applus.modelos.Cliente;
 public class CensoActivity extends AppCompatActivity implements ActualizarCensoFragment.ActualizarCensoListener, NuevoCensoFormFragment.FirmaListener{
 
 	public static String TAG_NUEVO_CENSO = "NUEVO_CENSO";
+	public static String TAG_FIRMA = "FIRMA";
 	CensoActivity listener = null;
 	FragmentManager fragmentManager;
 	Fragment fragment = null;
@@ -78,7 +77,7 @@ public class CensoActivity extends AppCompatActivity implements ActualizarCensoF
 		fragment = new FirmaFragment(listener);
 		fragmentManager = getFragmentManager();
 		fragmentManager.beginTransaction()
-				.add(R.id.frame_censo_container, fragment).addToBackStack(null).hide(fragmentNuevoCenso).commit();
+				.add(R.id.frame_censo_container, fragment, TAG_FIRMA).addToBackStack(TAG_FIRMA).hide(fragmentNuevoCenso).commit();
 	}
 
 	@Override
@@ -97,6 +96,11 @@ public class CensoActivity extends AppCompatActivity implements ActualizarCensoF
 		FragmentManager fm = getFragmentManager();
 		if (fm.getBackStackEntryCount() > 0) {
 			fm.popBackStack();
+			Fragment fragment = getFragmentManager().findFragmentByTag(TAG_FIRMA);
+			if (fragment != null) {
+				NuevoCensoFormFragment fa = (NuevoCensoFormFragment) fragmentNuevoCenso;
+				fa.validarTitulo();
+			}
 		} else {
 			super.onBackPressed();
 		}

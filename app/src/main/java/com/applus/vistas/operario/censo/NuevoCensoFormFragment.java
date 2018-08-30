@@ -22,6 +22,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
+import android.text.InputFilter;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -98,8 +99,33 @@ public class NuevoCensoFormFragment extends Fragment implements
 
 	private String fotoSoporte = "";
 
+	private boolean isNuevoCenso = true;
+
+	ArrayList<TipoCliente> listatipoCliente = new ArrayList<TipoCliente>();
+
 	public void setFirmaString(String firmaString) {
 		this.firmaString = firmaString;
+		try {
+			//obteniendo el cliente
+			clienteEncontrado = getArguments().getParcelable("cliente");
+			if(clienteEncontrado != null){
+				getActivity().setTitle("Actualización de censo");
+			}else{
+				getActivity().setTitle("Nuevo censo");
+			}
+		}catch (Exception e){
+
+		}finally {
+
+		}
+	}
+
+	public void validarTitulo() {
+		if(isNuevoCenso){
+			getActivity().setTitle("Nuevo censo");
+		}else{
+			getActivity().setTitle("Actualización de censo");
+		}
 	}
 
 	@Override
@@ -113,6 +139,10 @@ public class NuevoCensoFormFragment extends Fragment implements
 		if(rootView != null){
 			nombre = (EditText) rootView.findViewById(R.id.nc_nombre);
 			direccion = (EditText) rootView.findViewById(R.id.nc_direccion);
+
+			nombre.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
+			direccion.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
+
 			nic = (EditText) rootView.findViewById(R.id.nc_nic);
 			observaciones = (EditText) rootView.findViewById(R.id.nc_observaciones);
 			consumo = (TextView) rootView.findViewById(R.id.lb_consumo);
@@ -154,6 +184,7 @@ public class NuevoCensoFormFragment extends Fragment implements
 			//obteniendo el cliente
 			clienteEncontrado = getArguments().getParcelable("cliente");
 			if(clienteEncontrado != null){
+				isNuevoCenso = false;
 				nombre.setText(clienteEncontrado.getNombre());
 				direccion.setText(clienteEncontrado.getDireccion());
 				nic.setText("" + clienteEncontrado.getNic());
@@ -164,12 +195,11 @@ public class NuevoCensoFormFragment extends Fragment implements
 				getActivity().setTitle("Actualización de censo");
 			}
 
-			ArrayList<TipoCliente> tipos = new ArrayList<TipoCliente>();
-			tipos.add(new TipoCliente("C","COMERCIAL"));
-			tipos.add(new TipoCliente("R","RESIDENCIAL"));
-			tipos.add(new TipoCliente("I","INDUSTRIAL"));
+			listatipoCliente.add(new TipoCliente("C","COMERCIAL"));
+			listatipoCliente.add(new TipoCliente("R","RESIDENCIAL"));
+			listatipoCliente.add(new TipoCliente("I","INDUSTRIAL"));
 			ArrayAdapter<TipoCliente> tiposAdapter = new ArrayAdapter<TipoCliente>(getActivity(),
-					android.R.layout.simple_spinner_item, tipos);
+					android.R.layout.simple_spinner_item, listatipoCliente);
 			tiposAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			listaTipoCliente.setAdapter(tiposAdapter);
 			listaTipoCliente.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -180,7 +210,7 @@ public class NuevoCensoFormFragment extends Fragment implements
 
 				@Override
 				public void onNothingSelected(AdapterView<?> parentView) {
-					tipoClienteElegido = null;
+					tipoClienteElegido = (TipoCliente) parentView.getItemAtPosition(0);
 				}
 			});
 		}
@@ -237,28 +267,6 @@ public class NuevoCensoFormFragment extends Fragment implements
 	public void guardar() {
 		String motivo = "";
 		boolean pasa = true;
-		if (cliente_obj == null) {
-            cliente_obj = new Cliente();
-            if(clienteEncontrado != null){
-				cliente_obj.setCodigo(clienteEncontrado.getCodigo());
-			}else{
-				cliente_obj.setCodigo(0);
-			}
-			cliente_obj.setNombre(nombre.getText().toString());
-			cliente_obj.setDireccion(direccion.getText().toString());
-			if (nic.getText().toString().equals("")){
-				nic.setText("0");
-			}
-			cliente_obj.setNic(Long.parseLong(nic.getText().toString()));
-            cliente_obj.setBarrio("0");
-            cliente_obj.setFk_distrito(0);
-            cliente_obj.setFk_municipio(0);
-            cliente_obj.setId(0);
-		}
-		if(fotoSoporte.equals("")){
-			pasa = false;
-			motivo = "Debe tomar una foto de soporte";
-		}
 		if(nombre.getText().toString().trim().equals("")){
 			pasa = false;
 			motivo = "Debe ingresar el nombre";
@@ -280,11 +288,34 @@ public class NuevoCensoFormFragment extends Fragment implements
 			motivo = "Debe elegir algun electrodomestico";
 		}
 
+		if(isNuevoCenso){
+			if(fotoSoporte.trim().equals("")){
+				pasa = false;
+				motivo = "Debe tomar una foto para el censo.";
+			}
+		}
+
 		if(firmaString.equals("")){
 			pasa = false;
 			motivo = "Debe firmar el censo";
 		}
 		if (pasa) {
+			if (cliente_obj == null) {
+				cliente_obj = new Cliente();
+				if(clienteEncontrado != null){
+					cliente_obj.setCodigo(clienteEncontrado.getCodigo());
+				}else{
+					cliente_obj.setCodigo(0);
+				}
+				cliente_obj.setNombre(nombre.getText().toString());
+				cliente_obj.setDireccion(direccion.getText().toString());
+
+				cliente_obj.setNic(Long.parseLong(nic.getText().toString()));
+				cliente_obj.setBarrio("0");
+				cliente_obj.setFk_distrito(0);
+				cliente_obj.setFk_municipio(0);
+				cliente_obj.setId(0);
+			}
 			iniciarGuardado(LATITUD, LONGITUD, ACURRACY);
 		} else {
 			Toast.makeText(getActivity(), motivo,
@@ -385,10 +416,12 @@ public class NuevoCensoFormFragment extends Fragment implements
 	}
 
 	private void limpiar() {
+		isNuevoCenso = true;
 		last_insert = 0;
 		nombre.setText("");
 		direccion.setText("");
 		nic.setText("");
+		clienteEncontrado = null;
 		electrodomesticosAdapter = new ElectrodomesticosListAdapter(
 				listener,
 				getActivity(),
@@ -397,7 +430,10 @@ public class NuevoCensoFormFragment extends Fragment implements
 		consumo.setText("Total consumo 0 Watts");
 		cliente_obj = null;
 		tipoClienteElegido = null;
-		listaTipoCliente.setAdapter(null);
+		ArrayAdapter<TipoCliente> tiposAdapter = new ArrayAdapter<TipoCliente>(getActivity(),
+				android.R.layout.simple_spinner_item, listatipoCliente);
+		tiposAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		listaTipoCliente.setAdapter(tiposAdapter);
 	}
 
 	LocationManager locManager;
@@ -530,13 +566,15 @@ public class NuevoCensoFormFragment extends Fragment implements
 			}
 		} catch (Exception e) {
 			limpiar();
-			System.out.println("progressDialog: "+progressDialog);
+			System.out.println("Excepcion: "+e);
 			if(progressDialog!=null){
 				progressDialog.dismiss();
 			}
 			msg = new Message();
-			msg.obj = "Se guardo PERO....Excepcion: "+e;
+			msg.obj = "El censo se ha guardado en el telefono pero no se pudo enviar.";
 			handlerDialog.sendMessage(msg);
+		}finally {
+			getActivity().getFragmentManager().popBackStack();
 		}
 		
 	}

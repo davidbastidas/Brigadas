@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputFilter;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -16,10 +17,14 @@ import android.widget.Toast;
 import com.applus.R;
 import com.applus.controladores.ClientesController;
 import com.applus.modelos.Cliente;
+import com.applus.modelos.ClienteAActualizar;
+import com.applus.modelos.SesionSingleton;
 import com.applus.modelos.TipoCliente;
 import com.applus.vistas.operario.censo.DialogNic;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class ActualizarCliente extends AppCompatActivity implements  DialogNic.NicListener{
 
@@ -53,6 +58,12 @@ public class ActualizarCliente extends AppCompatActivity implements  DialogNic.N
         ac_tipoCliente.setEnabled(false);
         ac_ReporteDesocupado.setEnabled(false);
 
+        ac_codigo.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
+        ac_nombre.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
+        ac_direccion.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
+        ac_nic.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
+
+
         ArrayList<TipoCliente> tipos = new ArrayList<TipoCliente>();
         tipos.add(new TipoCliente("","SIN TIPO"));
         tipos.add(new TipoCliente("C","COMERCIAL"));
@@ -77,7 +88,6 @@ public class ActualizarCliente extends AppCompatActivity implements  DialogNic.N
         ArrayList<TipoCliente> tiposNovedad = new ArrayList<TipoCliente>();
         tiposNovedad.add(new TipoCliente("SINNOVEDAD","SIN NOVEDAD"));
         tiposNovedad.add(new TipoCliente("DESOCUPADO","DESOCUPADO"));
-        tiposNovedad.add(new TipoCliente("HABITADO","HABITADO"));
         ArrayAdapter<TipoCliente> tiposNovedadAdapter = new ArrayAdapter<TipoCliente>(this,
                 android.R.layout.simple_spinner_item, tiposNovedad);
         tiposNovedadAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -118,8 +128,6 @@ public class ActualizarCliente extends AppCompatActivity implements  DialogNic.N
                             ac_ReporteDesocupado.setSelection(0);
                         } else if(clienteEncontrado.getReporte().equals("DESOCUPADO")){
                             ac_ReporteDesocupado.setSelection(1);
-                        } else if(clienteEncontrado.getReporte().equals("HABITADO")){
-                            ac_ReporteDesocupado.setSelection(2);
                         }
 
                         ac_nombre.setEnabled(true);
@@ -143,14 +151,71 @@ public class ActualizarCliente extends AppCompatActivity implements  DialogNic.N
         ac_guardar_cliente.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Cliente cliente = new Cliente();
-                cliente.setCodigo(clienteEncontrado.getCodigo());
-                cliente.setNombre(ac_nombre.getText().toString());
-                cliente.setDireccion(ac_direccion.getText().toString());
-                cliente.setNic(clienteEncontrado.getNic());
-                cliente.setTipo_cliente(tipoClienteElegido.getTag());
-                cliente.setReporte(tipoNovedadElegido.getTag());
-                cont.insertarClienteActualizar(cliente, activity);
+                ClienteAActualizar cliente = null;
+                String date = new SimpleDateFormat("yyyy-MM-dd")
+                        .format(new Date());
+                if (!ac_nombre.getText().toString().equalsIgnoreCase(clienteEncontrado.getNombre())){
+                    cliente = new ClienteAActualizar();
+                    cliente.setCodigo(clienteEncontrado.getCodigo());
+                    cliente.setCampo("nombre");
+                    cliente.setDatoAnterior(clienteEncontrado.getNombre());
+                    cliente.setDatoActual(ac_nombre.getText().toString());
+                    cliente.setFkUsuario(SesionSingleton.getInstance().getFk_id_operario());
+                    cliente.setEsAplicado(0);
+                    cliente.setFecha(date);
+                    cont.insertarClienteActualizar(cliente, activity);
+                }
+
+                if (!ac_direccion.getText().toString().equalsIgnoreCase(clienteEncontrado.getDireccion())){
+                    cliente = new ClienteAActualizar();
+                    cliente.setCodigo(clienteEncontrado.getCodigo());
+                    cliente.setCampo("direccion");
+                    cliente.setDatoAnterior(clienteEncontrado.getDireccion());
+                    cliente.setDatoActual(ac_direccion.getText().toString());
+                    cliente.setFkUsuario(SesionSingleton.getInstance().getFk_id_operario());
+                    cliente.setEsAplicado(0);
+                    cliente.setFecha(date);
+                    cont.insertarClienteActualizar(cliente, activity);
+                }
+
+                if (!ac_nic.getText().toString().equalsIgnoreCase(""+clienteEncontrado.getNic())){
+                    cliente = new ClienteAActualizar();
+                    cliente.setCodigo(clienteEncontrado.getCodigo());
+                    cliente.setCampo("nic");
+                    cliente.setDatoAnterior(""+clienteEncontrado.getNic());
+                    cliente.setDatoActual(ac_nic.getText().toString());
+                    cliente.setFkUsuario(SesionSingleton.getInstance().getFk_id_operario());
+                    cliente.setEsAplicado(0);
+                    cliente.setFecha(date);
+                    cont.insertarClienteActualizar(cliente, activity);
+                }
+
+                if (!tipoClienteElegido.getTag().equalsIgnoreCase(clienteEncontrado.getTipo())){
+                    cliente = new ClienteAActualizar();
+                    cliente.setCodigo(clienteEncontrado.getCodigo());
+                    cliente.setCampo("tipo_cliente");
+                    cliente.setDatoAnterior(clienteEncontrado.getTipo());
+                    cliente.setDatoActual(tipoClienteElegido.getTag());
+                    cliente.setFkUsuario(SesionSingleton.getInstance().getFk_id_operario());
+                    cliente.setEsAplicado(0);
+                    cliente.setFecha(date);
+                    cont.insertarClienteActualizar(cliente, activity);
+                }
+
+                if(!tipoNovedadElegido.getTag().equalsIgnoreCase("SINNOVEDAD")){
+                    if (!tipoNovedadElegido.getTag().equalsIgnoreCase(clienteEncontrado.getReporte())){
+                        cliente = new ClienteAActualizar();
+                        cliente.setCodigo(clienteEncontrado.getCodigo());
+                        cliente.setCampo("tipo_reporte");
+                        cliente.setDatoAnterior(clienteEncontrado.getReporte());
+                        cliente.setDatoActual(tipoNovedadElegido.getTag());
+                        cliente.setFkUsuario(SesionSingleton.getInstance().getFk_id_operario());
+                        cliente.setEsAplicado(0);
+                        cliente.setFecha(date);
+                        cont.insertarClienteActualizar(cliente, activity);
+                    }
+                }
+
                 limpiar();
                 Toast.makeText(activity, "Cliente Actualizado. Sincronize para enviar.", Toast.LENGTH_LONG).show();
                 finish();

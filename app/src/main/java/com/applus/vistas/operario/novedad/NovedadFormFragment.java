@@ -1,24 +1,5 @@
 package com.applus.vistas.operario.novedad;
 
-import com.applus.controladores.ConexionController;
-import com.applus.controladores.NovedadController;
-import com.applus.controladores.NovedadObservacionController;
-import com.applus.controladores.NovedadTipoController;
-import com.applus.R;
-import com.applus.modelos.Cliente;
-import com.applus.modelos.NovedadObservacion;
-import com.applus.modelos.NovedadTipo;
-import com.applus.modelos.Novedades;
-import com.applus.modelos.SesionSingleton;
-import com.applus.vistas.operario.DialogoGPS;
-import com.applus.vistas.operario.DialogoGPS.OnGPSIntent;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
-import org.json.JSONObject;
-
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
@@ -50,6 +31,25 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.applus.R;
+import com.applus.controladores.ConexionController;
+import com.applus.controladores.NovedadController;
+import com.applus.controladores.NovedadObservacionController;
+import com.applus.controladores.NovedadTipoController;
+import com.applus.modelos.Cliente;
+import com.applus.modelos.NovedadObservacion;
+import com.applus.modelos.NovedadTipo;
+import com.applus.modelos.Novedades;
+import com.applus.modelos.SesionSingleton;
+import com.applus.vistas.operario.DialogoGPS;
+import com.applus.vistas.operario.DialogoGPS.OnGPSIntent;
+
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 public class NovedadFormFragment extends Fragment implements OnNovedad, OnGPSIntent {
 
@@ -98,7 +98,7 @@ public class NovedadFormFragment extends Fragment implements OnNovedad, OnGPSInt
 
 			@Override
 			public void onNothingSelected(AdapterView<?> parentView) {
-				// your code here
+				tipo_novedad_final = (NovedadTipo) parentView.getItemAtPosition(0);
 			}
 		});
 
@@ -116,7 +116,7 @@ public class NovedadFormFragment extends Fragment implements OnNovedad, OnGPSInt
 
 			@Override
 			public void onNothingSelected(AdapterView<?> parentView) {
-				// your code here
+				obs_novedad_final = (NovedadObservacion) parentView.getItemAtPosition(0);
 			}
 		});
 		// add a click listener to the button
@@ -220,6 +220,7 @@ public class NovedadFormFragment extends Fragment implements OnNovedad, OnGPSInt
 	public void guardar() {
 		String motivo = "";
 		boolean pasa = true;
+
 		if (tipo_novedad_final == null) {
 			pasa = false;
 			motivo = "Elija tipo de novedad";
@@ -334,14 +335,23 @@ public class NovedadFormFragment extends Fragment implements OnNovedad, OnGPSInt
 	}
 
 	private void limpiar() {
-		tipo_novedad.setSelection(0);
+		tipo_novedad_final = null;
+		obs_novedad_final = null;
+		ArrayAdapter<NovedadTipo> novtipAdapter = new ArrayAdapter<NovedadTipo>(getActivity(),
+				android.R.layout.simple_spinner_item, lista_tipo_novedad);
+		novtipAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		tipo_novedad.setAdapter(novtipAdapter);
 		codigo.setText("");
 		cliente.setText("");
 		distrito.setText("");
 		municipio.setText("");
 		barrio.setText("");
-		observacion.setSelection(0);
+		ArrayAdapter<NovedadObservacion> novobsAdapter = new ArrayAdapter<NovedadObservacion>(getActivity(),
+				android.R.layout.simple_spinner_item, lista_obs_novedad);
+		novobsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		observacion.setAdapter(novobsAdapter);
 		otro.setText("");
+		cliente_obj = null;
 		last_insert = 0;
 	}
 
@@ -484,7 +494,7 @@ public class NovedadFormFragment extends Fragment implements OnNovedad, OnGPSInt
 				progressDialog.dismiss();
 			}
 			msg = new Message();
-			msg.obj = "Se guardo PERO....Excepcion: "+e;
+			msg.obj = "La Novedad se ha guardado en el telefono pero no se pudo enviar.";
 			handlerDialog.sendMessage(msg);
 		}
 		

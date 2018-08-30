@@ -55,7 +55,7 @@ public class ClientesDescarga extends AppCompatActivity implements ClientesInter
 	String busquedaPor = "";
 	long totalPaginas = 0;
 	long contadorPaginas = 0;
-	long registrosPorPagina = 1000;
+	long registrosPorPagina = 100;
 	long pagina = 0;
 
 	//dialogo
@@ -251,6 +251,7 @@ public class ClientesDescarga extends AppCompatActivity implements ClientesInter
 				foranea = barrioElegido.getId();
 			}
 			final long forarenaF = foranea;
+			System.out.println(pagina+" , "+ registrosPorPagina);
 			new AsyncTask<Void, Integer, Boolean>(){
 
 				@Override
@@ -304,6 +305,9 @@ public class ClientesDescarga extends AppCompatActivity implements ClientesInter
 				}else{
 					c.setReporte("");
 				}
+				if(c.getCodigo() == 1313760){
+					System.out.println("OJOOOOOOO: 1313760");
+				}
 				clieController.insertar(c, Activity);
 			}
 		} catch (Exception e) {
@@ -313,7 +317,7 @@ public class ClientesDescarga extends AppCompatActivity implements ClientesInter
 
 			//calcular si quedan mas clientes
 			contadorPaginas++;
-			System.out.println(contadorPaginas+" de "+ totalPaginas);
+
 			if(contadorPaginas < totalPaginas){
 				//volvemos a pedir mas clientes
 				pagina = pagina + registrosPorPagina;
@@ -326,6 +330,7 @@ public class ClientesDescarga extends AppCompatActivity implements ClientesInter
 					foranea = barrioElegido.getId();
 				}
 				final long forarenaF = foranea;
+				System.out.println(pagina+" , "+ registrosPorPagina);
 				new AsyncTask<Void, Integer, Boolean>(){
 
 					@Override

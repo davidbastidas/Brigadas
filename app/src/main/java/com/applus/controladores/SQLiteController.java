@@ -236,11 +236,12 @@ public class SQLiteController extends SQLiteOpenHelper {
 		db.execSQL("create table cliente_actualizar(" +
 				" id INTEGER PRIMARY KEY AUTOINCREMENT," +
 				" codigo INTEGER," +
-				" nombre TEXT," +
-				" direccion TEXT," +
-				" nic INTEGER," +
-				" tipo_cliente TEXT," +
-				" reporte TEXT," +
+				" campo TEXT," +
+				" dato_anterior TEXT," +
+				" dato_actual TEXT," +
+				" fk_usuario INT," +
+				" es_aplicado INT," +
+				" fecha DATE," +
 				" last_insert INT" +
 				")");
 	}

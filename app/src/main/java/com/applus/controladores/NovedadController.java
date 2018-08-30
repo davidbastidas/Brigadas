@@ -1,13 +1,13 @@
 package com.applus.controladores;
 
-import com.applus.modelos.Novedades;
-
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
+import com.applus.modelos.Novedades;
+
+import java.util.ArrayList;
 
 public class NovedadController {
 
@@ -86,7 +86,7 @@ public class NovedadController {
 		if(!condicion.equals("")){
 			where=" WHERE "+condicion;
 		}
-		c = db.rawQuery("SELECT * FROM novedades"+where+" "+limit, null);
+		c = db.rawQuery("SELECT * FROM novedades"+where+" ORDER BY id DESC "+limit, null);
 		countCursor=db.rawQuery("SELECT count(id) FROM novedades"+where, null);
 		if (countCursor.moveToFirst()) {
 			do {

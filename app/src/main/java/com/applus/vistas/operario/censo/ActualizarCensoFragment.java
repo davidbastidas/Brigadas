@@ -53,6 +53,12 @@ public class ActualizarCensoFragment extends Fragment{
 	}
 
 	@Override
+	public void onResume() {
+		limpiar();
+		super.onResume();
+	}
+
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_actualizar_censo, container, false);
@@ -125,7 +131,7 @@ public class ActualizarCensoFragment extends Fragment{
 						Toast.makeText(getActivity(), "Busque primero un cliente", Toast.LENGTH_SHORT).show();
 					}
 				}else{
-					Toast.makeText(getActivity(), "No puede actualizar porque hay un censo No Aplicado.", Toast.LENGTH_LONG).show();
+					Toast.makeText(getActivity(), "No puede actualizar. Por favor verifique el codigo y que no tenga censos por revisar.", Toast.LENGTH_LONG).show();
 				}
 			}
 		});
@@ -151,5 +157,7 @@ public class ActualizarCensoFragment extends Fragment{
 		ac_nombre.setText("");
 		ac_direccion.setText("");
 		ac_nic.setText("");
+		clienteEncontrado = null;
+		puedeActualizar = false;
 	}
 }

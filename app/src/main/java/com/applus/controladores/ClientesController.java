@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.applus.modelos.Cliente;
+import com.applus.modelos.ClienteAActualizar;
 
 import java.util.ArrayList;
 
@@ -176,26 +177,27 @@ public class ClientesController {
 		return dataSet;
 	}
 
-	public synchronized void insertarClienteActualizar(Cliente cliente, Activity activity) {
+	public synchronized void insertarClienteActualizar(ClienteAActualizar cliente, Activity activity) {
 		SQLiteController usdbh = SQLiteController.getInstance(activity);
 		SQLiteDatabase db = usdbh.getMyWritableDatabase();
 		// Si hemos abierto correctamente la base de datos
 		if (db != null) {
 			ContentValues registro=new ContentValues();
 			registro.put("codigo", cliente.getCodigo());
-			registro.put("nombre", cliente.getNombre());
-			registro.put("direccion", cliente.getDireccion());
-			registro.put("nic", cliente.getNic());
-			registro.put("tipo_cliente", cliente.getTipo_cliente());
-			registro.put("reporte", cliente.getReporte());
+			registro.put("campo", cliente.getCampo());
+			registro.put("dato_anterior", cliente.getDatoAnterior());
+			registro.put("dato_actual", cliente.getDatoActual());
+			registro.put("fk_usuario", cliente.getFkUsuario());
+			registro.put("es_aplicado", cliente.getEsAplicado());
+			registro.put("fecha", cliente.getFecha());
 			registro.put("last_insert", 0);
 			lastInsert=db.insert("cliente_actualizar", null, registro);
 		}
 	}
 
-	public synchronized ArrayList<Cliente> getClientesAActualizar(Activity activity){
-		Cliente dataSet;
-		ArrayList<Cliente> cliente =new ArrayList<Cliente>();
+	public synchronized ArrayList<ClienteAActualizar> getClientesAActualizar(Activity activity){
+		ClienteAActualizar dataSet;
+		ArrayList<ClienteAActualizar> cliente =new ArrayList<ClienteAActualizar>();
 		Cursor c= null;
 		SQLiteController usdbh = SQLiteController.getInstance(activity);
 		SQLiteDatabase db = usdbh.getMyWritableDatabase();
@@ -203,14 +205,15 @@ public class ClientesController {
 
 		if (c.moveToFirst()) {
 			do {
-				dataSet = new Cliente();
+				dataSet = new ClienteAActualizar();
 				dataSet.setId(c.getLong(0));
 				dataSet.setCodigo(c.getLong(1));
-				dataSet.setNombre(c.getString(2));
-				dataSet.setDireccion(c.getString(3));
-				dataSet.setNic(c.getLong(4));
-				dataSet.setTipo_cliente(c.getString(5));
-				dataSet.setReporte(c.getString(6));
+				dataSet.setCampo(c.getString(2));
+				dataSet.setDatoAnterior(c.getString(3));
+				dataSet.setDatoActual(c.getString(4));
+				dataSet.setFkUsuario(c.getLong(5));
+				dataSet.setEsAplicado(c.getInt(6));
+				dataSet.setFecha(c.getString(7));
 				cliente.add(dataSet);
 			} while (c.moveToNext());
 		}
@@ -249,5 +252,13 @@ public class ClientesController {
 		}
 		// no cerramos por singleton
 		return actualizados;
+	}
+
+	public synchronized void eliminarClienteActualizar(Activity activity){
+		SQLiteController usdbh = SQLiteController.getInstance(activity);
+		SQLiteDatabase db = usdbh.getMyWritableDatabase();
+		if (db != null) {
+			db.execSQL("DELETE FROM cliente_actualizar");
+		}
 	}
 }

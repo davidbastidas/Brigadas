@@ -1,16 +1,6 @@
 package com.applus.vistas.admin;
 
-import com.applus.controladores.BrigadaController;
-import com.applus.controladores.NovedadController;
-import com.applus.controladores.TotalizadorController;
-import com.applus.R;
-import com.applus.vistas.slidermenu.adapter.NavDrawerListAdapter;
-import com.applus.vistas.slidermenu.model.NavDrawerItem;
-
-import java.util.ArrayList;
-
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -28,6 +18,16 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.applus.R;
+import com.applus.controladores.BrigadaController;
+import com.applus.controladores.ClientesController;
+import com.applus.controladores.NovedadController;
+import com.applus.controladores.TotalizadorController;
+import com.applus.vistas.slidermenu.adapter.NavDrawerListAdapter;
+import com.applus.vistas.slidermenu.model.NavDrawerItem;
+
+import java.util.ArrayList;
 
 public class AdminActivity extends AppCompatActivity {
 
@@ -255,6 +255,8 @@ public class AdminActivity extends AppCompatActivity {
 		tot.eliminar("", this);
 		NovedadController nov=new NovedadController();
 		nov.eliminar("", this);
+		ClientesController cli=new ClientesController();
+		cli.eliminarClienteActualizar(this);
 		Toast.makeText(this, "Registros eliminados!",
 				Toast.LENGTH_LONG).show();
 	}
