@@ -10,13 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.applus.R;
-import com.applus.controladores.BarrioController;
-import com.applus.controladores.DepartamentoController;
-import com.applus.controladores.MunicipioController;
-import com.applus.modelos.Barrio;
 import com.applus.modelos.Censo;
-import com.applus.modelos.Departamento;
-import com.applus.modelos.Municipio;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -48,10 +45,15 @@ public class CensoAdaptadorLista extends BaseAdapter {
 
 		
 		subtitulo = (TextView) view.findViewById(R.id.t_tipo_id_tipo);
-		subtitulo.setText("");
-		
 		t_dir_barrio = (TextView) view.findViewById(R.id.t_dir_barrio);
-		t_dir_barrio.setText("");
+		JSONObject json = null;
+		try {
+			json = new JSONObject(censos.get(position).getDatos());
+			subtitulo.setText("NOMBRE: " + json.getString("nombre"));
+			t_dir_barrio.setText("DIRECCION: " + json.getString("direccion"));
+		} catch (JSONException e) {
+			System.out.println(e);
+		}
 		
 		t_comentario = (TextView) view.findViewById(R.id.t_comentario);
 		t_comentario.setText("");

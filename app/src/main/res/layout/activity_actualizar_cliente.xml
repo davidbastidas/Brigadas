@@ -130,6 +130,14 @@
             android:padding="3dp" />
 
         <Button
+            android:id="@+id/pedirFirma"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_weight="0"
+            android:text="Presione para Firmar" />
+
+        <Button
             android:id="@+id/ac_guardar_cliente"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

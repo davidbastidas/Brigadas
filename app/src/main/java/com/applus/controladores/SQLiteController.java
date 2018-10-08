@@ -242,7 +242,9 @@ public class SQLiteController extends SQLiteOpenHelper {
 				" fk_usuario INT," +
 				" es_aplicado INT," +
 				" fecha DATE," +
-				" last_insert INT" +
+				" last_insert INT," +
+				" firma TEXT," +
+				" foto TEXT" +
 				")");
 	}
 

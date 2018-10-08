@@ -61,13 +61,13 @@ public class CensoListado extends AppCompatActivity {
 		setContentView(R.layout.fragment_vista_total);
 		Activity=this;
 		context=this;
-		progressBar = (ProgressBar) findViewById(R.id.progressBar1);
-		textViewDisplaying = (TextView) findViewById(R.id.displaying);
-		first = (ImageButton) findViewById(R.id.buttonfirst);
-		prev = (ImageButton) findViewById(R.id.buttonprev);
-		next = (ImageButton) findViewById(R.id.buttonnext);
-		last = (ImageButton) findViewById(R.id.buttonlast);
-		lista = (ListView)  findViewById(R.id.lista);
+		progressBar = findViewById(R.id.progressBar1);
+		textViewDisplaying = findViewById(R.id.displaying);
+		first = findViewById(R.id.buttonfirst);
+		prev = findViewById(R.id.buttonprev);
+		next = findViewById(R.id.buttonnext);
+		last = findViewById(R.id.buttonlast);
+		lista = findViewById(R.id.lista);
 		lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position,
@@ -75,13 +75,8 @@ public class CensoListado extends AppCompatActivity {
 				try {
 					Censo o = (Censo) parent.getItemAtPosition(position);
 					vistaDetalle(o);
-					/*Toast.makeText(
-					this,
-					"Selecci�n: " + Integer.toString(position) + " - "
-							+ o.getId() + ", " + o.getCliente(),
-					Toast.LENGTH_LONG).show();*/
 				} catch (Exception ex) {
-					Toast.makeText(Activity, "Selecci�n: " + ex, Toast.LENGTH_SHORT).show();
+					Toast.makeText(Activity, "Selección: " + ex, Toast.LENGTH_SHORT).show();
 				}
 			}
 		});
@@ -253,10 +248,9 @@ public class CensoListado extends AppCompatActivity {
 		}
 	}
 	public void vistaDetalle(Censo servicio){
-		/*intentar = new Intent(this, Detalle.class );
+		intentar = new Intent(this, ActivityDetalleCenso.class );
 		intentar.putExtra("servicio", servicio);
-		intentar.putExtra("llamado", "itinerario");
-        startActivityForResult(intentar, 0);*/
+        startActivityForResult(intentar, 0);
 	}
 	public static void setImageButtonEnabled(Context ctxt, boolean enabled, 
 	        ImageButton item, int iconResId) {

@@ -3,9 +3,14 @@ package com.applus.vistas.operario.clientes;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
+import android.util.Base64;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -22,13 +27,14 @@ import com.applus.modelos.SesionSingleton;
 import com.applus.modelos.TipoCliente;
 import com.applus.vistas.operario.censo.DialogNic;
 
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class ActualizarCliente extends AppCompatActivity implements  DialogNic.NicListener{
+public class ActualizarCliente extends AppCompatActivity implements DialogNic.NicListener{
 
-    Button ac_buscar_codigo, ac_buscar_nic, ac_guardar_cliente;
+    Button ac_buscar_codigo, ac_buscar_nic, ac_guardar_cliente, pedirFirma;
     EditText ac_codigo, ac_nombre, ac_direccion, ac_nic;
     Spinner ac_tipoCliente, ac_ReporteDesocupado;
     Intent intent = null;
@@ -38,6 +44,8 @@ public class ActualizarCliente extends AppCompatActivity implements  DialogNic.N
     ActualizarCliente listener = null;
     ClientesController cont = new ClientesController();
     Cliente clienteEncontrado = null;
+    private String fotoSoporte = "";
+    private String firmaSoporte = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +60,7 @@ public class ActualizarCliente extends AppCompatActivity implements  DialogNic.N
         ac_nic = (EditText) findViewById(R.id.ac_nic);
         ac_buscar_codigo = (Button) findViewById(R.id.ac_buscar_codigo);
         ac_buscar_nic = (Button) findViewById(R.id.ac_buscar_nic);
+        pedirFirma = (Button) findViewById(R.id.pedirFirma);
         ac_guardar_cliente = (Button) findViewById(R.id.ac_guardar_cliente);
         ac_tipoCliente = (Spinner) findViewById(R.id.ac_tipoCliente);
         ac_ReporteDesocupado = (Spinner) findViewById(R.id.ac_ReporteDesocupado);
@@ -148,6 +157,14 @@ public class ActualizarCliente extends AppCompatActivity implements  DialogNic.N
                 df.show(getFragmentManager(), "nic");
             }
         });
+
+        pedirFirma.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(activity, Firma.class);
+                startActivityForResult(i, 1);
+            }
+        });
         ac_guardar_cliente.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -240,5 +257,60 @@ public class ActualizarCliente extends AppCompatActivity implements  DialogNic.N
     @Override
     public void onAddNic(Cliente cliente) {
         ac_nic.setText("" + cliente.getNic());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_actualizar_cliente, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar actions click
+        switch (item.getItemId()) {
+            case R.id.mfotoactualizarcliente:
+                takePhoto();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void takePhoto(){
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, 1888);
+
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case 1888:
+                System.out.println("recibe");
+                if (resultCode == Activity.RESULT_OK){
+                    Bitmap bmp = (Bitmap) data.getExtras().get("data");
+                    fotoSoporte = BitMapToString(bmp);
+                    System.out.println("foto soporte");
+
+                }
+                break;
+            case 1:
+                if(resultCode == Activity.RESULT_OK){
+                    firmaSoporte = data.getStringExtra("firma");
+                }
+                if (resultCode == Activity.RESULT_CANCELED) {
+                    //Write your code if there's no result
+                }
+                break;
+        }
+    }
+
+    public String BitMapToString(Bitmap bitmap){
+        ByteArrayOutputStream baos=new  ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG,30, baos);
+        byte [] b=baos.toByteArray();
+        String temp= Base64.encodeToString(b, Base64.DEFAULT);
+        return temp;
     }
 }

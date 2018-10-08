@@ -195,6 +195,7 @@ public class NuevoCensoFormFragment extends Fragment implements
 				getActivity().setTitle("Actualización de censo");
 			}
 
+			listatipoCliente.add(new TipoCliente("","SIN TIPO"));
 			listatipoCliente.add(new TipoCliente("C","COMERCIAL"));
 			listatipoCliente.add(new TipoCliente("R","RESIDENCIAL"));
 			listatipoCliente.add(new TipoCliente("I","INDUSTRIAL"));
@@ -280,6 +281,9 @@ public class NuevoCensoFormFragment extends Fragment implements
 			motivo = "Debe ingresar el NIC";
 		}
 		if(tipoClienteElegido == null){
+			pasa = false;
+			motivo = "Debe elegir el tipo de cliente";
+		}else if (tipoClienteElegido.getTag().equals("")){
 			pasa = false;
 			motivo = "Debe elegir el tipo de cliente";
 		}
@@ -683,7 +687,7 @@ public class NuevoCensoFormFragment extends Fragment implements
 			case 1888:
 				System.out.println("recibe");
 				if (resultCode == Activity.RESULT_OK){
-					Bitmap bmp = (Bitmap) data.getExtras().get("data");;
+					Bitmap bmp = (Bitmap) data.getExtras().get("data");
 					ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
 					bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
@@ -693,7 +697,7 @@ public class NuevoCensoFormFragment extends Fragment implements
 
 					Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0,
                             byteArray.length);
-					fotoSoporte = BitMapToString(bitmap);
+					fotoSoporte = BitMapToString(bmp);
 					System.out.println("foto soporte");
 
 				}
