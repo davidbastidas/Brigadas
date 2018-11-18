@@ -16,13 +16,15 @@ import android.widget.Toast;
 
 import com.applus.R;
 import com.applus.controladores.BarrioController;
-import com.applus.controladores.ClientesController;
 import com.applus.controladores.DepartamentoController;
 import com.applus.controladores.MunicipioController;
+import com.applus.controladores.NicsController;
 import com.applus.modelos.Barrio;
 import com.applus.modelos.Cliente;
 import com.applus.modelos.Departamento;
 import com.applus.modelos.Municipio;
+import com.applus.modelos.Nics;
+import com.applus.modelos.SesionSingleton;
 
 import java.util.ArrayList;
 
@@ -36,11 +38,19 @@ public class DialogNic extends DialogFragment {
 	Municipio municipioElegido = null;
 	Barrio barrioElegido = null;
 	Cliente nicElegido = null;
+	long nicBuscado = 0;
 
-	public DialogNic(NicListener mListener){
+	ArrayAdapter<Cliente> nicAdapter = null;
+	ArrayAdapter<Municipio> municipioAdapter = null;
+	boolean detenerAutoSelectNic = false;
+	boolean detenerAutoSelectDepartamento = false;
+	boolean detenerAutoSelectMunicipio = false;
+
+	public DialogNic(NicListener mListener, long nicBuscado){
         try{
             this.mNicListener = mListener;
-        }catch (ClassCastException e){
+			this.nicBuscado = nicBuscado;
+        }catch (Exception e){
             throw new ClassCastException(mListener.toString() + "implementa el dialog listener");
         }
     }
@@ -90,10 +100,22 @@ public class DialogNic extends DialogFragment {
 				//llenando los municipios
 				MunicipioController mun = new MunicipioController();
 				ArrayList<Municipio> municipios = mun.consultar(0, 0, "fk_departamento=" + departamentoElegido.getId() + " ORDER BY nombre ", getActivity());
-				ArrayAdapter<Municipio> municipioAdapter = new ArrayAdapter<Municipio>(getActivity(),
+				municipioAdapter = new ArrayAdapter<Municipio>(getActivity(),
 						android.R.layout.simple_spinner_item, municipios);
 				municipioAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 				municipio.setAdapter(municipioAdapter);
+
+				if(detenerAutoSelectDepartamento){
+					ArrayList<Departamento> departamentoC = dep.consultar(0, 0, "id=" + SesionSingleton.getInstance().getFkDistrito(), getActivity());
+
+					for (int i = 0; i < departamentoAdapter.getCount(); i++){
+						if(departamentoAdapter.getItem(i).getId() == departamentoC.get(0).getId()) {
+							departamento.setSelection(departamentoAdapter.getPosition(departamentoAdapter.getItem(i)));
+							break;
+						}
+					}
+					detenerAutoSelectDepartamento = false;
+				}
 			}
 
 			@Override
@@ -127,13 +149,22 @@ public class DialogNic extends DialogFragment {
 			public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
 				barrioElegido = (Barrio) parentView.getItemAtPosition(position);
 				//llenando los nics
-				ClientesController clieController = new ClientesController();
-				ArrayList<Cliente> clientes = clieController.consultar(0, 0, "fk_barrio=" + barrioElegido.getId() + " GROUP BY nic ", getActivity());
+				NicsController nicsController = new NicsController();
+				ArrayList<Nics> nics = nicsController.consultar(0, 0, "fk_barrio=" + barrioElegido.getId() + " GROUP BY nic ", getActivity());
+				System.out.println("barrioElegido: " + barrioElegido.getId());
+				System.out.println("nics: " + nics.size());
 
-				ArrayAdapter<Cliente> clienteAdapter = new ArrayAdapter<Cliente>(getActivity(),
+				ArrayList<Cliente> clientes = new ArrayList<Cliente>();
+				for (int i = 0; i < nics.size(); i++){
+					Cliente cliente = new Cliente();
+					System.out.println("NIc: " + nics.get(i).getFkBarrio());
+					cliente.setNic(nics.get(i).getNic());
+					clientes.add(cliente);
+				}
+				nicAdapter = new ArrayAdapter<Cliente>(getActivity(),
 						android.R.layout.simple_spinner_item, clientes);
-				clienteAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-				nic.setAdapter(clienteAdapter);
+				nicAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+				nic.setAdapter(nicAdapter);
 			}
 
 			@Override
@@ -147,6 +178,27 @@ public class DialogNic extends DialogFragment {
 			public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
 				nicElegido = (Cliente) parentView.getItemAtPosition(position);
 
+				if(detenerAutoSelectNic){
+					if(nicBuscado != 0){
+						int positionT = 0;
+						int fk_municipio = 0;
+						for (int i = 0; i < nicAdapter.getCount(); i++){
+							if(nicAdapter.getItem(i).getNic() == nicBuscado) {
+								fk_municipio = nicAdapter.getItem(i).getFk_municipio();
+								positionT = nicAdapter.getPosition(nicAdapter.getItem(i));
+								break;
+							}
+						}
+						for (int i = 0; i < municipioAdapter.getCount(); i++){
+							if(municipioAdapter.getItem(i).getId() == fk_municipio) {
+								municipio.setSelection(municipioAdapter.getPosition(municipioAdapter.getItem(i)));
+								break;
+							}
+						}
+						nic.setSelection(positionT);
+					}
+					detenerAutoSelectNic = false;
+				}
 			}
 
 			@Override

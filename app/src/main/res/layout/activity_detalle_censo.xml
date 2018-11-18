@@ -4,10 +4,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="5dp">
 
     <ListView
         android:id="@+id/lista_detalle"
+        android:layout_width="match_parent"
+        android:layout_height="233dp">
+
+    </ListView>
+
+    <TextView
+        android:id="@+id/textView32"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="Electrodomesticos" />
+
+    <ListView
+        android:id="@+id/lista_electrodomesticos"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </LinearLayout>

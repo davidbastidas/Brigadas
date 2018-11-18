@@ -7,16 +7,18 @@ public class Usuario {
 	int fk_id;
 	String nickname;
 	int tipo;
+	long fkDistrito;
 	public Usuario() {
 		super();
 	}
-	public Usuario(long id, String nombre, int fk_id, String nickname,int tipo) {
+	public Usuario(long id, String nombre, int fk_id, String nickname,int tipo, long fkDistrito) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
 		this.fk_id = fk_id;
 		this.nickname = nickname;
 		this.tipo = tipo;
+        this.fkDistrito = fkDistrito;
 	}
 	public int getTipo() {
 		return tipo;
@@ -47,5 +49,13 @@ public class Usuario {
 	}
 	public void setFk_id(int fk_id) {
 		this.fk_id = fk_id;
+	}
+
+	public long getFkDistrito() {
+		return fkDistrito;
+	}
+
+	public void setFkDistrito(long fkDistrito) {
+		this.fkDistrito = fkDistrito;
 	}
 }

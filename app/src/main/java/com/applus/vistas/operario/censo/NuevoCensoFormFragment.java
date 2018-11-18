@@ -152,7 +152,7 @@ public class NuevoCensoFormFragment extends Fragment implements
 			buscarNic.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					DialogFragment df=new DialogNic(listener);
+					DialogFragment df=new DialogNic(listener, 0);
 					df.show(getFragmentManager(), "nic");
 				}
 			});
@@ -388,16 +388,12 @@ public class NuevoCensoFormFragment extends Fragment implements
 					censoController.insertar(censo, getActivity());
 					last_insert = censoController.getLastInsert();
 					guardadoActivo = true;
-					if (SesionSingleton.getInstance().isINTERNET()) {//si internet
-						msg = new Message();
-						msg.obj = "Enviando por internet...";
-						System.out.println("Enviando por internet...");
-						handlerProgreso.sendMessage(msg);
-						conexion.enviarCenso(censo);
-					} else {
-						System.out.println("Limpiando");
-						limpiar();
-					}
+
+					msg = new Message();
+					msg.obj = "Enviando por internet...";
+					System.out.println("Enviando por internet...");
+					handlerProgreso.sendMessage(msg);
+					conexion.enviarCenso(censo);
 				}
 			} else {
 				/*myHandler.removeCallbacks(runnable);
@@ -416,6 +412,8 @@ public class NuevoCensoFormFragment extends Fragment implements
 			msg.obj = "Error";
 			System.out.println("Exception guardando: " + e + " " + e.getStackTrace()[0].getLineNumber());
 			handlerProgreso.sendMessage(msg);
+		}finally {
+
 		}
 	}
 
@@ -578,6 +576,9 @@ public class NuevoCensoFormFragment extends Fragment implements
 			msg.obj = "El censo se ha guardado en el telefono pero no se pudo enviar.";
 			handlerDialog.sendMessage(msg);
 		}finally {
+			if(progressDialog!=null){
+				progressDialog.dismiss();
+			}
 			getActivity().getFragmentManager().popBackStack();
 		}
 		

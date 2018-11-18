@@ -35,7 +35,53 @@ public class SesionSingleton {
 	
 	private String estado_datos;
 	private String estado_envio;
-	
+	private String acercade;
+	private long fkDistrito;
+	private String urlClientes = "";
+	private String versionClientes = "";
+	private String urlNics = "";
+	private String versionNics = "";
+
+	public String getUrlNics() {
+		return urlNics;
+	}
+
+	public void setUrlNics(String urlNics) {
+		this.urlNics = urlNics;
+	}
+
+	public String getVersionNics() {
+		return versionNics;
+	}
+
+	public void setVersionNics(String versionNics) {
+		this.versionNics = versionNics;
+	}
+
+	public String getVersionClientes() {
+		return versionClientes;
+	}
+
+	public void setVersionClientes(String versionClientes) {
+		this.versionClientes = versionClientes;
+	}
+
+	public String getUrlClientes() {
+		return urlClientes;
+	}
+
+	public void setUrlClientes(String urlClientes) {
+		this.urlClientes = urlClientes;
+	}
+
+	public long getFkDistrito() {
+		return fkDistrito;
+	}
+
+	public void setFkDistrito(long fkDistrito) {
+		this.fkDistrito = fkDistrito;
+	}
+
 	public String getEstado_datos() {
 		return estado_datos;
 	}
@@ -45,6 +91,15 @@ public class SesionSingleton {
 	public String getEstado_envio() {
 		return estado_envio;
 	}
+
+	public String getAcercade() {
+		return acercade;
+	}
+
+	public void setAcercade(String acercade) {
+		this.acercade = acercade;
+	}
+
 	public void setEstado_envio(String estado_envio) {
 		this.estado_envio = estado_envio;
 	}

@@ -98,7 +98,11 @@ public class SQLiteController extends SQLiteOpenHelper {
 				")");
 		db.execSQL("create table departamento(" +
 				" id INTEGER PRIMARY KEY AUTOINCREMENT," +
-				" nombre TEXT" +
+				" nombre TEXT," +
+				" abreviatura TEXT," +
+				" url TEXT," +
+				" version TEXT," +
+				" url_nic TEXT" +
 				")");
 		db.execSQL("create table estado_trabajo(" +
 				" id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -184,7 +188,8 @@ public class SQLiteController extends SQLiteOpenHelper {
 				" nombre TEXT," +
 				" fk_id int," +
 				" nickname TEXT," +
-				" tipo int" +
+				" tipo int," +
+				" fk_distrito int" +
 				")");
 		db.execSQL("create table imagenes(id INTEGER PRIMARY KEY AUTOINCREMENT, ruta VARCHAR(255), nombre VARCHAR(150), no_orden BIGINT, estado INT, fecha DATE)");
 		db.execSQL("create table censos(" +
@@ -231,7 +236,8 @@ public class SQLiteController extends SQLiteOpenHelper {
 				" itinerario TEXT," +
 				" fk_barrio INTEGER," +
 				" censos TEXT," +
-				" reporte TEXT" +
+				" reporte TEXT," +
+				" censo_fes TEXT" +
 				")");
 		db.execSQL("create table cliente_actualizar(" +
 				" id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -245,6 +251,20 @@ public class SQLiteController extends SQLiteOpenHelper {
 				" last_insert INT," +
 				" firma TEXT," +
 				" foto TEXT" +
+				")");
+		//censos descargados de la web
+		db.execSQL("create table censos_clientes(" +
+				" id INTEGER PRIMARY KEY AUTOINCREMENT," +
+				" cliente_id INTEGER," + //codigo del cliente
+				" fecha DATE," +
+				" estado TEXT," +
+				" usuario TEXT," +
+				" electrodomesticos TEXT" +
+				")");
+		db.execSQL("create table tabla_nics(" +
+				" id INTEGER PRIMARY KEY AUTOINCREMENT," +
+				" nic INTEGER," +
+				" fk_barrio INTEGER" +
 				")");
 	}
 

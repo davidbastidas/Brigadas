@@ -21,7 +21,6 @@ import android.widget.TextView;
 
 import com.applus.R;
 import com.applus.controladores.BrigadaAccionController;
-import com.applus.controladores.BrigadaController;
 import com.applus.controladores.CensoController;
 import com.applus.controladores.ClientesController;
 import com.applus.controladores.ConexionController;
@@ -65,7 +64,7 @@ import java.util.Date;
 
 public class HomeFragment extends Fragment implements AsyncResponse, InterfaceTareasLargas, OnBrigada, OnTotalizador, OnNovedad, OnCenso, OnCliente {
 	
-	private TextView estado,T_CONS_PROCESO,envio;
+	private TextView estado,T_CONS_PROCESO,envio, acercade;
 	ConexionController conexion;
 	Activity activity;
 	SesionSingleton se=SesionSingleton.getInstance();
@@ -76,8 +75,10 @@ public class HomeFragment extends Fragment implements AsyncResponse, InterfaceTa
 	    T_CONS_PROCESO = (TextView) rootView.findViewById(R.id.T_CONS_PROCESO);
 	    estado = (TextView) rootView.findViewById(R.id.estado);
 	    envio = (TextView) rootView.findViewById(R.id.envio);
+		acercade = (TextView) rootView.findViewById(R.id.acercade);
 	    estado.setText(se.getEstado_datos());
 	    envio.setText(se.getEstado_envio());
+		acercade.setText(se.getAcercade());
 	    conexion=new ConexionController();
 		conexion.callback_get=this;
 		conexion.callback=this;
@@ -87,12 +88,14 @@ public class HomeFragment extends Fragment implements AsyncResponse, InterfaceTa
 		conexion.callback_cliente = this;
 		conexion.setActivity(activity);
 	    mostrarReporte();
+		acercaDe();
         return rootView;
     }
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		    super.onCreate(savedInstanceState);
-		    setHasOptionsMenu(true);
-		    activity=getActivity();
+		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
+		activity=getActivity();
 	}
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -120,14 +123,11 @@ public class HomeFragment extends Fragment implements AsyncResponse, InterfaceTa
 		}
 	}
 	private void mostrarReporte() {
-		BrigadaController or=new BrigadaController();
-		TotalizadorController tot=new TotalizadorController();
-		NovedadController nov=new NovedadController();
-		CensoController cen=new CensoController();
+		TotalizadorController tot = new TotalizadorController();
+		NovedadController nov = new NovedadController();
+		CensoController cen = new CensoController();
 		ClientesController cliente = new ClientesController();
 		T_CONS_PROCESO.setText(
-				"Brigadas Atencion Daños Realizados= "+or.count("", activity)+"\n"+
-				"Brigadas Atencion Daños Enviados= "+or.count("last_insert>0", activity)+"\n"+
 				"Totalizadores Realizados= "+tot.count("", activity)+"\n"+
 				"Totalizadores Enviados= "+tot.count("last_insert>0", activity)+"\n"+
 				"Novedades Realizados= "+nov.count("", activity)+"\n"+
@@ -137,6 +137,14 @@ public class HomeFragment extends Fragment implements AsyncResponse, InterfaceTa
 				"Clientes Actualizados= "+cliente.countAActualizar("", activity)+"\n"+
 				"Clientes Actualizados Enviados= "+cliente.countAActualizar("last_insert>0", activity)
 				);
+	}
+
+	private void acercaDe(){
+		acercade.setText(
+			"GeoDato Version 1.3 2018-11-06 08:00:00\n" +
+			"VERSION DE ZONA: " + se.getVersionClientes() + "\n" +
+			"BARRIOS DESCARGADOS: "
+		);
 	}
 	////procesos masivos
 	
@@ -177,20 +185,16 @@ public class HomeFragment extends Fragment implements AsyncResponse, InterfaceTa
 
 		progressDialog.dismiss();
 	}
-
 	@Override
 	public void onConsultaCliente(String output) {
 		// TODO Auto-generated method stub
 		
 	}
 	/////finnnn
-	
-	
 	@Override
 	public void processFinishLogin(String output) {
 		// no se hace nada
 	}
-
 	@Override
 	public void onBajarDatosTablas(boolean respuesta) {
 		if(respuesta){
@@ -227,7 +231,6 @@ public class HomeFragment extends Fragment implements AsyncResponse, InterfaceTa
 			conexion.getMateriales(""+SesionSingleton.getInstance().getFk_id_operario());
 		}
 	}
-
 	@Override
 	public void onTablaMateriales(String output) {
 		JSONObject json_data;
@@ -257,7 +260,6 @@ public class HomeFragment extends Fragment implements AsyncResponse, InterfaceTa
 			conexion.getEstadoTrabajo(""+SesionSingleton.getInstance().getFk_id_operario());
 		}
 	}
-
 	@Override
 	public void onTablaEstadoTrabajo(String output) {
 		JSONObject json_data;
@@ -300,7 +302,16 @@ public class HomeFragment extends Fragment implements AsyncResponse, InterfaceTa
 			    JSONObject tr = departamentos.getJSONObject(i);
 			    values.add(new Departamento(
 			    		tr.getLong("id"),
-			    		tr.getString("nombre")));
+			    		tr.getString("nombre"),
+						tr.getString("abreviatura"),
+						tr.getString("ruta_archivo"),
+						tr.getString("version"),
+						tr.getString("ruta_archivo_nic")
+				));
+			    if(tr.getLong("id") == SesionSingleton.getInstance().getFkDistrito()){
+					SesionSingleton.getInstance().setUrlClientes(tr.getString("ruta_archivo"));
+					SesionSingleton.getInstance().setUrlNics(tr.getString("ruta_archivo_nic"));
+				}
 			}
 			if(values.size()>0){
 				dep.eliminar("", activity);
@@ -506,7 +517,6 @@ public class HomeFragment extends Fragment implements AsyncResponse, InterfaceTa
 			conexion.getFormularioCenso(""+SesionSingleton.getInstance().getFk_id_operario());
 		}
 	}
-
 	@Override
 	public void onDescargarFormularioCenso(String output) {
 		JSONObject json_data;
@@ -537,7 +547,6 @@ public class HomeFragment extends Fragment implements AsyncResponse, InterfaceTa
 		/*/*///*/*//*/
 		progressDialog.dismiss();
 	}
-
 	private Handler handlerProgreso, handlerDialog;
 	ProgressDialog progressDialog;
 	AlertDialog.Builder dialog;
@@ -553,5 +562,4 @@ public class HomeFragment extends Fragment implements AsyncResponse, InterfaceTa
 		progressDialog = ProgressDialog.show(activity, nombreActividad,
 				"Espere...", true);
 	}
-	
 }

@@ -172,6 +172,11 @@ public class OperarioActivity extends AppCompatActivity {
 		}
 	}
 
+	@Override
+	protected void onRestart(){
+		super.onRestart();
+		displayView(0);
+	}
 	/**
 	 * Slide menu item click listener
 	 * */

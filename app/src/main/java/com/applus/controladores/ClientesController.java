@@ -43,6 +43,7 @@ public class ClientesController {
 			registro.put("fk_barrio", censo.getFk_barrio());
 			registro.put("censos", censo.getCensos());
 			registro.put("reporte", censo.getReporte());
+			registro.put("censo_fes", censo.getCenso_fes());
 			lastInsert=db.insert(tableName, null, registro);
 		}
 	}
@@ -108,6 +109,7 @@ public class ClientesController {
 				dataSet.setFk_barrio(c.getInt(12));
 				dataSet.setCensos(c.getString(13));
 				dataSet.setReporte(c.getString(14));
+				dataSet.setCenso_fes(c.getString(15));
 				
 				//System.out.println("Item: " + c.getInt(1) + "Ciente: "+ c.getString(4) + "dir: " + c.getString(5));
 				cliente.add(dataSet);
@@ -170,6 +172,7 @@ public class ClientesController {
 				dataSet.setFk_barrio(c.getInt(12));
 				dataSet.setCensos(c.getString(13));
 				dataSet.setReporte(c.getString(14));
+				dataSet.setCenso_fes(c.getString(15));
 			} while (c.moveToNext());
 		}
 		c.close();

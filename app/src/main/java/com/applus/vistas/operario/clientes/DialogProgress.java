@@ -20,6 +20,7 @@ import android.widget.TextView;
 public class DialogProgress extends DialogFragment {
 
 	ProgressBar barra;
+	AlertDialog.Builder builder = null;
 
 	public interface NoticeDialogListener{
 		public void onDialogPositiveClick(DialogFragment dialog);
@@ -43,7 +44,7 @@ public class DialogProgress extends DialogFragment {
         barra = (ProgressBar) view.findViewById(R.id.barra);
         barra.setIndeterminate(true);
 		builder.setView(view);
-		builder.setTitle("Bajando datos de clientes");
+		builder.setTitle("Bajando datos");
 		AlertDialog dialog = builder.create();
 
         dialog.setOnShowListener(new OnShowListener() {
@@ -61,4 +62,5 @@ public class DialogProgress extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
+
 }

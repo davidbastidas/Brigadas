@@ -96,6 +96,8 @@ public class WebServiceTaskGET extends AsyncTask<String, Void, String> {
 			resultado=getCountClientes(params);
 		} else if(accionJava.equals("getClientes")){
 			resultado=getClientes(params);
+		} else if(accionJava.equals("getUrlArchivoCensos")){
+			resultado=getUrlArchivoCensos(params);
 		}
 		
 		return resultado;
@@ -136,6 +138,8 @@ public class WebServiceTaskGET extends AsyncTask<String, Void, String> {
 			clienteInterface.onCountClientes(result);
 		} else if(accionJava.equals("getClientes")){
 			clienteInterface.onDescargarClientes(result);
+		} else if(accionJava.equals("getUrlArchivoCensos")){
+			clienteInterface.onDescargarUrlCensos(result);
 		}
 		
 	}
@@ -669,6 +673,42 @@ public class WebServiceTaskGET extends AsyncTask<String, Void, String> {
 			nameValuePairs.add(new BasicNameValuePair("limit", params[3]));
 			nameValuePairs.add(new BasicNameValuePair("tabla", params[4]));
 			nameValuePairs.add(new BasicNameValuePair("id_campo", params[5]));
+			httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			HttpResponse httpResponse = httpClient.execute(httpPost);
+			HttpEntity httpEntity = httpResponse.getEntity();
+
+			if (httpEntity != null) {
+				InputStream inputStream = httpEntity.getContent();
+				if (inputStream != null) {
+					respuesta = leerRespuestaHttp(inputStream);
+				}
+			}
+		} catch (ConnectTimeoutException e) {
+			respuesta = "ConnectTimeoutException: " + e;
+		} catch (Exception e) {
+			respuesta = "Exception: " + e;
+		}
+		return respuesta;
+	}
+
+	private String getUrlArchivoCensos(String[] params) {
+		String respuesta="";
+		try {
+			HttpParams httpParams = new BasicHttpParams();
+
+			ConnManagerParams.setTimeout(httpParams, 60000);
+			HttpConnectionParams.setConnectionTimeout(httpParams,60000);
+			HttpConnectionParams.setSoTimeout(httpParams, 60000);
+
+			HttpClient httpClient = new DefaultHttpClient(httpParams);
+			System.out.println("URL servicio: " + NAMESPACE+"controlador=Cliente&accion=getUrlArchivoCensos");
+			HttpPost httpPost = new HttpPost(NAMESPACE+"controlador=Cliente&accion=getUrlArchivoCensos");
+
+			// Add your data
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
+					2);
+			nameValuePairs.add(new BasicNameValuePair("user", params[1]));
+			nameValuePairs.add(new BasicNameValuePair("barrios", params[2]));
 			httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			HttpResponse httpResponse = httpClient.execute(httpPost);
 			HttpEntity httpEntity = httpResponse.getEntity();

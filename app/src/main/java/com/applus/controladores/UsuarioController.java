@@ -22,11 +22,13 @@ public class UsuarioController {
 					"nombre," +
 					"fk_id," +
 					"nickname," +
-					"tipo" +
+					"tipo," +
+					"fk_distrito" +
 					") "
 					+ "VALUES ('"+ usuario.getNombre() + "',"+usuario.getFk_id()+
 					",'"+usuario.getNickname()+"'"+
-					","+usuario.getTipo()+""+
+					","+usuario.getTipo() +
+					","+usuario.getFkDistrito() +
 					")");
 			//Cerramos la base de datos
 			// no cerramos por singleton
@@ -85,6 +87,7 @@ public class UsuarioController {
 				dataSet.setFk_id(c.getInt(2));
 				dataSet.setNickname(c.getString(3));
 				dataSet.setTipo(c.getInt(4));
+				dataSet.setFkDistrito(c.getLong(5));
 			} while (c.moveToNext());
 		}
 		c.close();

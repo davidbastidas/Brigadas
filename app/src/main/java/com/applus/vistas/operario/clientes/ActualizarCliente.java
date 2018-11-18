@@ -153,8 +153,16 @@ public class ActualizarCliente extends AppCompatActivity implements DialogNic.Ni
         ac_buscar_nic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogFragment df=new DialogNic(listener);
-                df.show(getFragmentManager(), "nic");
+                try{
+                    if(!ac_nic.getText().toString().equals("")){
+                        DialogFragment df=new DialogNic(listener, Long.parseLong(ac_nic.getText().toString()));
+                        df.show(getFragmentManager(), "nic");
+                    }else{
+                        Toast.makeText(activity, "Por favor, digite el nic", Toast.LENGTH_SHORT).show();
+                    }
+                }catch (Exception e){
+                    Toast.makeText(activity, "Por favor, digite el nic", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

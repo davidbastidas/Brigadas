@@ -14,7 +14,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.applus.R;
+import com.applus.controladores.CensoClienteController;
 import com.applus.controladores.ClientesController;
+import com.applus.modelos.CensoCliente;
 import com.applus.modelos.Cliente;
 
 import org.json.JSONArray;
@@ -81,16 +83,16 @@ public class ActualizarCensoFragment extends Fragment{
 						ac_nic.setText("" + clienteEncontrado.getNic());
 						JSONObject json_data = null;
 						try {
-							json_data = new JSONObject(clienteEncontrado.getCensos());
-							JSONArray censos = json_data.getJSONArray("censos");
-							int size = censos.length();
+							CensoClienteController controllerCensoCleinte = new CensoClienteController();
+							ArrayList<CensoCliente> consultar = controllerCensoCleinte.consultar(0, 0, "cliente_id = " + clienteEncontrado.getCodigo(), getActivity());
+
+							int size = consultar.size();
 							String estado = "";
 							array.clear();
 							for (int i = 0; i < size; ++i) {
-								JSONObject cen = censos.getJSONObject(i);
 								item = new LinkedHashMap<String, String>();
-								item.put("fecha", cen.getString("fecha"));
-								if(Integer.parseInt(cen.getString("estado")) == 0){
+								item.put("fecha", consultar.get(i).getFecha());
+								if(Integer.parseInt(consultar.get(i).getEstado()) == 0){
 									estado = "No aplicado";
 									if(i == 0){
 										puedeActualizar = false;
@@ -101,13 +103,13 @@ public class ActualizarCensoFragment extends Fragment{
 										puedeActualizar = true;
 									}
 								}
-								item.put("usuario", "Censador : " + cen.getString("usuario") + " - Estado: " + estado);
+								item.put("usuario", "Censador : " + consultar.get(i).getUsuario() + " - Estado: " + estado);
 								array.add(item);
 							}
 							if (size == 0){
 								puedeActualizar = true;
 							}
-						} catch (JSONException e) {
+						} catch (Exception e) {
 							e.printStackTrace();
 						}
 

@@ -70,8 +70,8 @@
             android:label="@string/title_activity_censo"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".vistas.operario.clientes.ClientesDescarga"
-            android:label="@string/title_activity_clientes"
+            android:name=".vistas.operario.clientes.CensosDescarga"
+            android:label="@string/title_activity_descarga_censos"
             android:screenOrientation="portrait" />
         <activity
             android:name=".vistas.operario.clientes.MenuClientes"
@@ -84,6 +84,10 @@
         <activity
             android:name=".vistas.operario.censo.ActivityDetalleCenso"
             android:label="@string/title_activity_detalle_censo"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".vistas.operario.clientes.Firma"
+            android:label="@string/title_activity_firma"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

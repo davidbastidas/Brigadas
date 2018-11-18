@@ -7,14 +7,15 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:padding="5dp">
 
         <TextView
             android:id="@+id/textView1"
             style="@style/h1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Reporte de Actividad"/>
+            android:text="Reporte de Actividad" />
 
         <TextView
             android:id="@+id/T_CONS_PROCESO"
@@ -30,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Estado de Datos de Tablas" />
-        
+
         <TextView
             android:id="@+id/estado"
             style="@style/p_bold"
@@ -52,6 +53,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="envios" />
+
+        <TextView
+            android:id="@+id/textView30"
+            style="@style/h1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Acerca de" />
+
+        <TextView
+            android:id="@+id/acercade"
+            style="@style/p_bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="detalle" />
 
     </LinearLayout>
 

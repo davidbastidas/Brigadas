@@ -249,7 +249,7 @@ public class CensoListado extends AppCompatActivity {
 	}
 	public void vistaDetalle(Censo servicio){
 		intentar = new Intent(this, ActivityDetalleCenso.class );
-		intentar.putExtra("servicio", servicio);
+		intentar.putExtra("servicio_id", servicio.getId());
         startActivityForResult(intentar, 0);
 	}
 	public static void setImageButtonEnabled(Context ctxt, boolean enabled, 

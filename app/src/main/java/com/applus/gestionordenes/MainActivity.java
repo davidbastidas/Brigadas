@@ -1,13 +1,5 @@
 package com.applus.gestionordenes;
 
-import com.applus.R;
-import com.applus.controladores.ConexionController;
-import com.applus.controladores.SQLiteController;
-import com.applus.modelos.SesionSingleton;
-import com.applus.vistas.admin.AdminActivity;
-
-import java.io.File;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -20,8 +12,20 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.URLUtil;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.applus.R;
+import com.applus.controladores.ConexionController;
+import com.applus.controladores.DepartamentoController;
+import com.applus.controladores.SQLiteController;
+import com.applus.modelos.Departamento;
+import com.applus.modelos.SesionSingleton;
+import com.applus.vistas.admin.AdminActivity;
+
+import java.io.File;
+import java.util.ArrayList;
 
 public class MainActivity extends Activity {
 
@@ -158,7 +162,8 @@ public class MainActivity extends Activity {
 		SesionSingleton sesion = SesionSingleton.getInstance();
 		Editor editor = preferencias.edit();
 		if(preferencias.getString("ip", "").equals("")){
-			editor.putString("ip", "181.48.232.226:8087");
+			editor.putString("ip", "186.159.113.202:8087");
+			//editor.putString("ip", "192.168.0.131");
 		}
 		if(preferencias.getString("proyecto", "").equals("")){
 			editor.putString("proyecto", "appme");
@@ -174,6 +179,12 @@ public class MainActivity extends Activity {
 		}
 		if(preferencias.getString("orden_realizado", "").equals("")){
 			editor.putString("orden_realizado", "0");
+		}
+		if(preferencias.getString("versionclientes", "").equals("")){
+			editor.putString("versionclientes", "");
+		}
+		if(preferencias.getString("versionnics", "").equals("")){
+			editor.putString("versionnics", "");
 		}
 		editor.commit();
 
@@ -203,6 +214,8 @@ public class MainActivity extends Activity {
 		System.out.println("Usuario Operario= "+preferencias.getString("usuario_operario",""));
 		sesion.setEstado_datos(preferencias.getString("estado_datos",""));
 		sesion.setEstado_envio(preferencias.getString("estado_envio",""));
+		sesion.setVersionClientes(preferencias.getString("versionclientes",""));
+		sesion.setVersionNics(preferencias.getString("versionnics",""));
 		PASA_LOGIN = true;
 	}
 	public void resetearContrasenaAdmin(Activity activity){

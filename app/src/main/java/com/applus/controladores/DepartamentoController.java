@@ -26,11 +26,19 @@ public class DepartamentoController {
 				for (int i = 0; i < tamano; i++) {
 					db.execSQL("INSERT OR IGNORE INTO departamento (" +
 							"id," +
-							"nombre" +
+							"nombre," +
+							"abreviatura," +
+							"url," +
+							"version," +
+							"url_nic" +
 							") "
 							+ "VALUES (" +
 							""+ departamentos.get(i).getId() + ", " +
-							"'"+ departamentos.get(i).getNombre() + "'" +
+							"'"+ departamentos.get(i).getNombre() + "'," +
+							"'"+ departamentos.get(i).getAbreviatura() + "'," +
+							"'"+ departamentos.get(i).getUrl() + "'," +
+							"'"+ departamentos.get(i).getVersion() + "'," +
+							"'"+ departamentos.get(i).getUrlNics() + "'" +
 							")");
 				}
 			}
@@ -89,6 +97,11 @@ public class DepartamentoController {
 				dataSet = new Departamento();
 				dataSet.setId(c.getLong(0));
 				dataSet.setNombre(c.getString(1));
+				dataSet.setAbreviatura(c.getString(2));
+				dataSet.setUrl(c.getString(3));
+				dataSet.setVersion(c.getString(4));
+				dataSet.setUrlNics(c.getString(5));
+				dataSet.setVersionNics(c.getString(4));
 				
 				//System.out.println("Item: " + c.getInt(1) + "Ciente: "+ c.getString(4) + "dir: " + c.getString(5));
 				departamentos.add(dataSet);

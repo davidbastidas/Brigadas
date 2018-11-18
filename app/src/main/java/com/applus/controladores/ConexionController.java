@@ -5,8 +5,10 @@ import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.webkit.URLUtil;
 import android.widget.Toast;
 
 import com.applus.R;
@@ -16,6 +18,7 @@ import com.applus.modelos.BrigadaMaterialParcelable;
 import com.applus.modelos.BrigadaParcelable;
 import com.applus.modelos.BrigadaTrabajoParcelable;
 import com.applus.modelos.Censo;
+import com.applus.modelos.Departamento;
 import com.applus.modelos.Novedades;
 import com.applus.modelos.SesionSingleton;
 import com.applus.modelos.Totalizadores;
@@ -29,6 +32,7 @@ import com.applus.vistas.operario.totalizadores.OnTotalizador;
 
 import org.json.JSONObject;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -82,6 +86,7 @@ public class ConexionController implements AsyncResponse,OnBrigada,OnTotalizador
 					registro.put("nombre", json_data.getString("nombre"));
 					registro.put("fk_id", json_data.getInt("fk_id"));
 					registro.put("nickname", json_data.getString("nickname"));
+					registro.put("fk_distrito", json_data.getLong("fk_distrito"));
 					usu.actualizar(registro, "id=1", activity);
 					se.setFk_id_operario(json_data.getInt("fk_id"));
 					System.out.println("fk_id: "+se.getFk_id_operario());
@@ -91,13 +96,15 @@ public class ConexionController implements AsyncResponse,OnBrigada,OnTotalizador
 									json_data.getString("nombre"), 
 									json_data.getInt("fk_id"),
 									json_data.getString("nickname"),
-									json_data.getInt("tipo")
+									json_data.getInt("tipo"),
+									json_data.getLong("fk_distrito")
 									), activity);
 					se.setFk_id_operario(json_data.getInt("fk_id"));
 					System.out.println("fk_id: "+se.getFk_id_operario());
 					se.setNombreOperario(json_data.getString("nombre"));
 				}
-				System.out.println("FK USUARIO:"+json_data.getInt("fk_id") );
+				se.setFkDistrito(json_data.getLong("fk_distrito"));
+                System.out.println("FK USUARIO:"+json_data.getInt("fk_id") );
 				progressDialog.dismiss();
 				Toast.makeText(activity, "Login OK",
 						Toast.LENGTH_SHORT).show();
@@ -111,6 +118,7 @@ public class ConexionController implements AsyncResponse,OnBrigada,OnTotalizador
 						se.setFk_id_operario(usuario.getFk_id());
 						se.setNombreOperario(usuario.getNombre());
 						se.setTipo_usuario(usuario.getTipo());
+						se.setFkDistrito(usuario.getFkDistrito());
 						se.setPasaLogin(true);
 						progressDialog.dismiss();
 						Toast.makeText(activity, "Verifica tu conexion, no estas Online",
@@ -125,6 +133,7 @@ public class ConexionController implements AsyncResponse,OnBrigada,OnTotalizador
 				}
 				progressDialog.dismiss();
 			}
+			borrarCarpetasDatos();
 		} catch (Exception e) {
 			System.out.println("Exception: "+e);
 			Toast.makeText(activity, "Verifica tu conexion, o la Configuracion", Toast.LENGTH_LONG).show();
@@ -139,6 +148,7 @@ public class ConexionController implements AsyncResponse,OnBrigada,OnTotalizador
 					se.setFk_id_operario(usuario.getFk_id());
 					se.setNombreOperario(usuario.getNombre());
 					se.setTipo_usuario(usuario.getTipo());
+					se.setFkDistrito(usuario.getFkDistrito());
 					se.setPasaLogin(true);
 					progressDialog.dismiss();
 					Toast.makeText(activity, "Verifica tu conexion, no estas Online",
@@ -154,6 +164,8 @@ public class ConexionController implements AsyncResponse,OnBrigada,OnTotalizador
 				Toast.makeText(activity, "Debes conectar a internet para Logueo.",
 						Toast.LENGTH_SHORT).show();
 			}
+		}finally {
+			borrarCarpetasDatos();
 			progressDialog.dismiss();
 		}
     }
@@ -519,6 +531,18 @@ public class ConexionController implements AsyncResponse,OnBrigada,OnTotalizador
 				"" + idCampo
 		});
 	}
+
+	public void getUrlArchivoCensos(String user, String arrayString){
+		String accionJava = "getUrlArchivoCensos";
+		WebServiceTaskGET asyncTask = new WebServiceTaskGET();
+		asyncTask.clienteInterface = this;
+		this.user=user;
+		asyncTask.execute(new String[] {
+				accionJava,
+				user,
+				arrayString
+		});
+	}
 	
 	//************************//////
 	public String FormatDate(String fecha) {
@@ -601,5 +625,34 @@ public class ConexionController implements AsyncResponse,OnBrigada,OnTotalizador
 	@Override
 	public void onDescargarClientes(String output) {
 		clienteInterface.onDescargarClientes(output);
+	}
+
+	@Override
+	public void onDescargarUrlCensos(String result) {
+		clienteInterface.onDescargarUrlCensos(result);
+	}
+
+	private void borrarCarpetasDatos(){
+		DepartamentoController dep=new DepartamentoController();
+		ArrayList<Departamento> departamento = dep.consultar(0, 0, "id=" + SesionSingleton.getInstance().getFkDistrito(), activity);
+
+		if(departamento.size() > 0){
+			String url = departamento.get(0).getUrl();
+			String filename = URLUtil.guessFileName(url, null, null);
+			File zip = new File(Environment.getExternalStorageDirectory() + File.separator + filename);
+			zip.delete();
+			if (filename.indexOf(".") > 0){
+				filename = filename.substring(0, filename.lastIndexOf("."));
+			}
+
+			File dir = new File(Environment.getExternalStorageDirectory() + File.separator + filename);
+			if(dir.isDirectory()){
+				String[] children = dir.list();
+				for(int i = 0; i < children.length; i++){
+					new File(dir, children[i]).delete();
+				}
+			}
+			dir.delete();
+		}
 	}
 }
