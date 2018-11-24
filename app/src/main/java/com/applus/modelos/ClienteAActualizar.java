@@ -10,6 +10,8 @@ public class ClienteAActualizar implements Parcelable {
 	long fkUsuario;
 	int esAplicado;
 	String fecha;
+	String foto;
+	String firma;
 	int lastInsert;
 
 	public ClienteAActualizar(){
@@ -27,6 +29,8 @@ public class ClienteAActualizar implements Parcelable {
 		this.esAplicado = source.readInt();
 		this.fecha = source.readString();
 		this.lastInsert = source.readInt();
+		this.foto = source.readString();
+		this.firma = source.readString();
 	}
 	public static final Creator CREATOR = new Creator() {
 		public ClienteAActualizar createFromParcel(Parcel in) {
@@ -51,6 +55,8 @@ public class ClienteAActualizar implements Parcelable {
 		dest.writeInt(esAplicado);
 		dest.writeString(fecha);
 		dest.writeInt(lastInsert);
+		dest.writeString(foto);
+		dest.writeString(firma);
 	}
 
 	public long getId() {
@@ -123,6 +129,22 @@ public class ClienteAActualizar implements Parcelable {
 
 	public void setLastInsert(int lastInsert) {
 		this.lastInsert = lastInsert;
+	}
+
+	public String getFoto() {
+		return foto;
+	}
+
+	public void setFoto(String foto) {
+		this.foto = foto;
+	}
+
+	public String getFirma() {
+		return firma;
+	}
+
+	public void setFirma(String firma) {
+		this.firma = firma;
 	}
 
 	@Override

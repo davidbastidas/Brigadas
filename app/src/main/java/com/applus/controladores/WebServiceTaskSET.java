@@ -746,6 +746,8 @@ public class WebServiceTaskSET extends AsyncTask<Object, Void, String> {
 				mainObj.put("usuario", n.getFkUsuario());
 				mainObj.put("aplicado", n.getEsAplicado());
 				mainObj.put("fecha", n.getFecha());
+				mainObj.put("foto", n.getFoto());
+				mainObj.put("firma", n.getFirma());
 
 				System.out.println("JSON clientes actualizar: " + mainObj.toString());
 				try {

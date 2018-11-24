@@ -94,8 +94,14 @@ public class ActualizarCensoFragment extends Fragment{
 								item.put("fecha", consultar.get(i).getFecha());
 								if(Integer.parseInt(consultar.get(i).getEstado()) == 0){
 									estado = "No aplicado";
-									if(i == 0){
-										puedeActualizar = false;
+									if(consultar.get(i).getAprobado() == 0 || consultar.get(i).getAprobado() == 1){
+										if(i == 0){
+											puedeActualizar = false;
+										}
+									}else if(consultar.get(i).getAprobado() == 2){
+										if(i == 0){
+											puedeActualizar = true;
+										}
 									}
 								}else{
 									estado = "Aplicado";
@@ -106,6 +112,13 @@ public class ActualizarCensoFragment extends Fragment{
 								item.put("usuario", "Censador : " + consultar.get(i).getUsuario() + " - Estado: " + estado);
 								array.add(item);
 							}
+							SimpleAdapter adapter = new SimpleAdapter(
+									getActivity(),
+									array,
+									R.layout.imagen_textview2,
+									new String[]{"fecha","usuario"},
+									new int[]{R.id.titulo, R.id.subtitulo});
+							listaCensos.setAdapter(adapter);
 							if (size == 0){
 								puedeActualizar = true;
 							}

@@ -64,26 +64,26 @@ import java.util.Date;
 
 public class HomeFragment extends Fragment implements AsyncResponse, InterfaceTareasLargas, OnBrigada, OnTotalizador, OnNovedad, OnCenso, OnCliente {
 	
-	private TextView estado,T_CONS_PROCESO,envio, acercade;
+	private TextView estado, T_CONS_PROCESO, envio, acercade;
 	ConexionController conexion;
 	Activity activity;
-	SesionSingleton se=SesionSingleton.getInstance();
+	SesionSingleton se = SesionSingleton.getInstance();
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
-	    T_CONS_PROCESO = (TextView) rootView.findViewById(R.id.T_CONS_PROCESO);
-	    estado = (TextView) rootView.findViewById(R.id.estado);
-	    envio = (TextView) rootView.findViewById(R.id.envio);
-		acercade = (TextView) rootView.findViewById(R.id.acercade);
+	    T_CONS_PROCESO = rootView.findViewById(R.id.T_CONS_PROCESO);
+	    estado = rootView.findViewById(R.id.estado);
+	    envio = rootView.findViewById(R.id.envio);
+		acercade = rootView.findViewById(R.id.acercade);
 	    estado.setText(se.getEstado_datos());
 	    envio.setText(se.getEstado_envio());
 		acercade.setText(se.getAcercade());
-	    conexion=new ConexionController();
-		conexion.callback_get=this;
-		conexion.callback=this;
-		conexion.callback_totalizador=this;
-		conexion.callback_novedad=this;
+	    conexion = new ConexionController();
+		conexion.callback_get = this;
+		conexion.callback = this;
+		conexion.callback_totalizador = this;
+		conexion.callback_novedad = this;
 		conexion.callback_censo = this;
 		conexion.callback_cliente = this;
 		conexion.setActivity(activity);
@@ -95,7 +95,7 @@ public class HomeFragment extends Fragment implements AsyncResponse, InterfaceTa
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
-		activity=getActivity();
+		activity = getActivity();
 	}
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {

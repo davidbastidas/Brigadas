@@ -176,10 +176,11 @@ public class ActualizarCliente extends AppCompatActivity implements DialogNic.Ni
         ac_guardar_cliente.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ac_guardar_cliente.setEnabled(false);
                 ClienteAActualizar cliente = null;
                 String date = new SimpleDateFormat("yyyy-MM-dd")
                         .format(new Date());
-                if (!ac_nombre.getText().toString().equalsIgnoreCase(clienteEncontrado.getNombre())){
+                if (!ac_nombre.getText().toString().trim().equalsIgnoreCase(clienteEncontrado.getNombre())){
                     cliente = new ClienteAActualizar();
                     cliente.setCodigo(clienteEncontrado.getCodigo());
                     cliente.setCampo("nombre");
@@ -188,10 +189,12 @@ public class ActualizarCliente extends AppCompatActivity implements DialogNic.Ni
                     cliente.setFkUsuario(SesionSingleton.getInstance().getFk_id_operario());
                     cliente.setEsAplicado(0);
                     cliente.setFecha(date);
+                    cliente.setFoto(fotoSoporte);
+                    cliente.setFirma(firmaSoporte);
                     cont.insertarClienteActualizar(cliente, activity);
                 }
 
-                if (!ac_direccion.getText().toString().equalsIgnoreCase(clienteEncontrado.getDireccion())){
+                if (!ac_direccion.getText().toString().trim().equalsIgnoreCase(clienteEncontrado.getDireccion())){
                     cliente = new ClienteAActualizar();
                     cliente.setCodigo(clienteEncontrado.getCodigo());
                     cliente.setCampo("direccion");
@@ -200,10 +203,12 @@ public class ActualizarCliente extends AppCompatActivity implements DialogNic.Ni
                     cliente.setFkUsuario(SesionSingleton.getInstance().getFk_id_operario());
                     cliente.setEsAplicado(0);
                     cliente.setFecha(date);
+                    cliente.setFoto(fotoSoporte);
+                    cliente.setFirma(firmaSoporte);
                     cont.insertarClienteActualizar(cliente, activity);
                 }
 
-                if (!ac_nic.getText().toString().equalsIgnoreCase(""+clienteEncontrado.getNic())){
+                if (!ac_nic.getText().toString().trim().equalsIgnoreCase(""+clienteEncontrado.getNic())){
                     cliente = new ClienteAActualizar();
                     cliente.setCodigo(clienteEncontrado.getCodigo());
                     cliente.setCampo("nic");
@@ -212,6 +217,8 @@ public class ActualizarCliente extends AppCompatActivity implements DialogNic.Ni
                     cliente.setFkUsuario(SesionSingleton.getInstance().getFk_id_operario());
                     cliente.setEsAplicado(0);
                     cliente.setFecha(date);
+                    cliente.setFoto(fotoSoporte);
+                    cliente.setFirma(firmaSoporte);
                     cont.insertarClienteActualizar(cliente, activity);
                 }
 
@@ -224,6 +231,8 @@ public class ActualizarCliente extends AppCompatActivity implements DialogNic.Ni
                     cliente.setFkUsuario(SesionSingleton.getInstance().getFk_id_operario());
                     cliente.setEsAplicado(0);
                     cliente.setFecha(date);
+                    cliente.setFoto(fotoSoporte);
+                    cliente.setFirma(firmaSoporte);
                     cont.insertarClienteActualizar(cliente, activity);
                 }
 
@@ -237,6 +246,8 @@ public class ActualizarCliente extends AppCompatActivity implements DialogNic.Ni
                         cliente.setFkUsuario(SesionSingleton.getInstance().getFk_id_operario());
                         cliente.setEsAplicado(0);
                         cliente.setFecha(date);
+                        cliente.setFoto(fotoSoporte);
+                        cliente.setFirma(firmaSoporte);
                         cont.insertarClienteActualizar(cliente, activity);
                     }
                 }

@@ -193,6 +193,8 @@ public class ClientesController {
 			registro.put("fk_usuario", cliente.getFkUsuario());
 			registro.put("es_aplicado", cliente.getEsAplicado());
 			registro.put("fecha", cliente.getFecha());
+			registro.put("firma", cliente.getFirma());
+			registro.put("foto", cliente.getFoto());
 			registro.put("last_insert", 0);
 			lastInsert=db.insert("cliente_actualizar", null, registro);
 		}
@@ -217,6 +219,8 @@ public class ClientesController {
 				dataSet.setFkUsuario(c.getLong(5));
 				dataSet.setEsAplicado(c.getInt(6));
 				dataSet.setFecha(c.getString(7));
+				dataSet.setFirma(c.getString(9));
+				dataSet.setFoto(c.getString(10));
 				cliente.add(dataSet);
 			} while (c.moveToNext());
 		}

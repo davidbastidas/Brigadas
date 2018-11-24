@@ -34,6 +34,7 @@ public class CensoClienteController {
 			registro.put("estado", censo.getEstado());
 			registro.put("usuario", censo.getUsuario());
 			registro.put("electrodomesticos", "");
+			registro.put("aprobado", censo.getAprobado());
 			lastInsert = db.insert(tableName, null, registro);
 		}
 	}
@@ -96,6 +97,7 @@ public class CensoClienteController {
 				dataSet.setFecha(c.getString(2));
 				dataSet.setEstado(c.getString(3));
 				dataSet.setUsuario(c.getString(4));
+				dataSet.setAprobado(c.getInt(5));
 				censos.add(dataSet);
 			} while (c.moveToNext());
 		}

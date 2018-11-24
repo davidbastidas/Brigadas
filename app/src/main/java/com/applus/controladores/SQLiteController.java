@@ -259,7 +259,8 @@ public class SQLiteController extends SQLiteOpenHelper {
 				" fecha DATE," +
 				" estado TEXT," +
 				" usuario TEXT," +
-				" electrodomesticos TEXT" +
+				" electrodomesticos TEXT," +
+				" aprobado INTEGER" +
 				")");
 		db.execSQL("create table tabla_nics(" +
 				" id INTEGER PRIMARY KEY AUTOINCREMENT," +

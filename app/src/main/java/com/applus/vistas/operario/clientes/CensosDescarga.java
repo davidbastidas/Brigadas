@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -15,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.applus.R;
@@ -63,6 +65,7 @@ public class CensosDescarga extends AppCompatActivity implements ClientesInterfa
 
 	Spinner departamento, municipio, barrio;
     Button descargarBarrio;
+    TextView t_barrios_descargados;
 
 	Departamento departamentoElegido = null;
 	Municipio municipioElegido = null;
@@ -96,6 +99,10 @@ public class CensosDescarga extends AppCompatActivity implements ClientesInterfa
         municipio = (Spinner) findViewById(R.id.municipio);
         barrio = (Spinner) findViewById(R.id.barrio);
         descargarBarrio = (Button) findViewById(R.id.descargarBarrio);
+		t_barrios_descargados = findViewById(R.id.t_barrios_descargados);
+		SharedPreferences preferencias = getSharedPreferences("configuracion",
+				Context.MODE_PRIVATE);
+		t_barrios_descargados.setText(preferencias.getString("barrioselegidos", ""));
 
 		DepartamentoController dep = new DepartamentoController();
 		ArrayList<Departamento> departamentos = dep.consultar(0, 0, "", Activity);
@@ -161,11 +168,13 @@ public class CensosDescarga extends AppCompatActivity implements ClientesInterfa
             public void onClick(View v) {
 				ArrayList<StateVO> barriosCheck = myAdapterBarrio.getListState();
 				ArrayList<StateVO> barriosElegidos = null;
+				String barriosString = "";
 				if(barriosCheck.size() > 0){
 					barriosElegidos = new ArrayList<>();
 					for (int i = 0; i < barriosCheck.size(); i++){
 						if(barriosCheck.get(i).isSelected()){
 							barriosElegidos.add(barriosCheck.get(i));
+							barriosString += barriosCheck.get(i).getTitle() + "\n";
 						}
 					}
 					if(barriosElegidos.size() > 0){
@@ -173,6 +182,13 @@ public class CensosDescarga extends AppCompatActivity implements ClientesInterfa
 						String json = gson.toJson(barriosElegidos);
 
 						dialogo.show(getFragmentManager(), "Bajando Censos Realizados...");
+
+						SharedPreferences preferencias = getSharedPreferences("configuracion",
+								Context.MODE_PRIVATE);
+						SharedPreferences.Editor editor = preferencias.edit();
+						editor.putString("barrioselegidos", barriosString);
+						editor.commit();
+						t_barrios_descargados.setText(barriosString);
 						System.out.println("JsOn Array: " + json);
 						new AsyncTask<Void, Integer, Boolean>(){
 
@@ -511,6 +527,7 @@ public class CensosDescarga extends AppCompatActivity implements ClientesInterfa
 				c.setFecha(cli.getString("fecha"));
 				c.setEstado(cli.getString("estado"));
 				c.setUsuario(cli.getString("usuario"));
+				c.setAprobado(cli.getInt("aprobado"));
 
 				censoClienteController.insertar(c, Activity);
 				System.err.println("Insertado " + cli.getLong("cliente_id"));

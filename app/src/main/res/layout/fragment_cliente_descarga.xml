@@ -56,4 +56,19 @@
         android:layout_weight="0"
         android:text="Bajar" />
 
+    <TextView
+        android:id="@+id/textView31"
+        style="@style/h1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Barrios Descargados" />
+
+    <TextView
+        android:id="@+id/t_barrios_descargados"
+        style="@style/p_bold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sin Barrios" />
+
 </LinearLayout>

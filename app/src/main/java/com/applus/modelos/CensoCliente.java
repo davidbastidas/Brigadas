@@ -6,6 +6,7 @@ public class CensoCliente {
     private String fecha;
     private String estado;
     private String usuario;
+    private int aprobado;
 
     public long getId() {
         return id;
@@ -45,5 +46,13 @@ public class CensoCliente {
 
     public void setUsuario(String usuario) {
         this.usuario = usuario;
+    }
+
+    public int getAprobado() {
+        return aprobado;
+    }
+
+    public void setAprobado(int aprobado) {
+        this.aprobado = aprobado;
     }
 }
