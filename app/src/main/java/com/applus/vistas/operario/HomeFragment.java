@@ -141,7 +141,7 @@ public class HomeFragment extends Fragment implements AsyncResponse, InterfaceTa
 
 	private void acercaDe(){
 		acercade.setText(
-			"GeoDato Version 1.3 2018-11-06 08:00:00\n" +
+			"GeoDato Version 1.4 2018-12-20 08:00:00\n" +
 			"VERSION DE ZONA: " + se.getVersionClientes() + "\n" +
 			"BARRIOS DESCARGADOS: "
 		);

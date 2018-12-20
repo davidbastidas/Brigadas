@@ -17,11 +17,15 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.text.InputFilter;
 import android.util.Base64;
 import android.view.LayoutInflater;
@@ -40,6 +44,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.applus.BuildConfig;
 import com.applus.R;
 import com.applus.controladores.CensoController;
 import com.applus.controladores.ConexionController;
@@ -56,6 +61,11 @@ import com.google.gson.GsonBuilder;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -102,6 +112,8 @@ public class NuevoCensoFormFragment extends Fragment implements
 	private boolean isNuevoCenso = true;
 
 	ArrayList<TipoCliente> listatipoCliente = new ArrayList<TipoCliente>();
+
+	private File photoFile;
 
 	public void setFirmaString(String firmaString) {
 		this.firmaString = firmaString;
@@ -676,33 +688,85 @@ public class NuevoCensoFormFragment extends Fragment implements
 		nic.setText("" + cliente.getNic());
 	}
 
-	private void takePhoto(){
+	private void takePhoto() {
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		photoFile = null;
+		try {
+			photoFile = createImageFile();
+		} catch (IOException ex) {
+		}
+		Uri outputFileUri = null;
+		if (Build.VERSION.SDK_INT >=  Build.VERSION_CODES.N) {
+			outputFileUri = FileProvider.getUriForFile(getActivity(),
+					BuildConfig.APPLICATION_ID + ".provider",
+					photoFile);
+		} else{
+			outputFileUri = Uri.fromFile(photoFile);
+		}
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
 		startActivityForResult(intent, 1888);
-
 	}
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data){
 		super.onActivityResult(requestCode, resultCode, data);
 		switch (requestCode){
 			case 1888:
-				System.out.println("recibe");
-				if (resultCode == Activity.RESULT_OK){
-					Bitmap bmp = (Bitmap) data.getExtras().get("data");
-					ByteArrayOutputStream stream = new ByteArrayOutputStream();
-
-					bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
-					byte[] byteArray = stream.toByteArray();
-
-					// convert byte array to Bitmap
-
-					Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0,
-                            byteArray.length);
-					fotoSoporte = BitMapToString(bmp);
-					System.out.println("foto soporte");
+				if (resultCode == Activity.RESULT_OK) {
+					try {
+						Bitmap b = BitmapFactory.decodeFile(mCurrentPhotoPath);
+						Bitmap out = Bitmap.createScaledBitmap(b, 480, 640, false);
+						FileOutputStream fOut = new FileOutputStream(photoFile);
+						out.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+						fOut.flush();
+						fOut.close();
+						b.recycle();
+						out.recycle();
+						fotoSoporte = getStringFromFile(photoFile);
+					} catch (Exception e) {
+						System.err.println("Error foto: " + e);
+					}
 
 				}
 				break;
 		}
+	}
+
+	String mCurrentPhotoPath;
+
+	private File createImageFile() throws IOException {
+		// Create an image file name
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+		String imageFileName = "JPEG_" + timeStamp + "_";
+		File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+		File image = File.createTempFile(
+				imageFileName,  /* prefix */
+				".jpg",         /* suffix */
+				storageDir      /* directory */
+		);
+
+		// Save a file: path for use with ACTION_VIEW intents
+		mCurrentPhotoPath = image.getAbsolutePath();
+		return image;
+	}
+
+	private String getStringFromFile(File file) throws Exception {
+		InputStream in = new FileInputStream(file);
+		byte[] bytes;
+		byte[] buffer = new byte[8192];
+		int bytesRead;
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		try{
+			while ((bytesRead = in.read(buffer)) != -1){
+				output.write(buffer, 0, bytesRead);
+			}
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		bytes = output.toByteArray();
+		String ret = Base64.encodeToString(bytes, Base64.DEFAULT);
+		//Make sure you close all streams.
+		in.close();
+		return ret;
 	}
 }

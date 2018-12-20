@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.applus.R;
 import com.applus.vistas.operario.censo.SignatureView;
@@ -22,6 +23,15 @@ public class Firma extends AppCompatActivity {
 	Button borrarFirma, guardarFirma;
 
 	String firmaString = "";
+	private boolean obligadoFirmar = false, firmoDibujo = false;
+
+	public void setObligadoFirmar(boolean obligadoFirmar) {
+		this.obligadoFirmar = obligadoFirmar;
+	}
+
+	public boolean isFirmoDibujo() {
+		return firmoDibujo;
+	}
 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,12 +52,20 @@ public class Firma extends AppCompatActivity {
 		guardarFirma.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Bitmap mySignature = firma.getImage();
-				firmaString = BitMapToString(mySignature);
-				Intent returnIntent = new Intent();
-				returnIntent.putExtra("firma",firmaString);
-				setResult(ActualizarCliente.RESULT_OK,returnIntent);
-				finish();
+				if(obligadoFirmar){
+					if(firma.hasChanged()){
+						firmoDibujo = true;
+						Bitmap mySignature = firma.getImage();
+						firmaString = BitMapToString(mySignature);
+						Intent returnIntent = new Intent();
+						returnIntent.putExtra("firma",firmaString);
+						setResult(ActualizarCliente.RESULT_OK,returnIntent);
+						finish();
+					}else{
+						firmoDibujo = true;
+						Toast.makeText(Firma.this, "Por favor, FIRMAR.", Toast.LENGTH_SHORT).show();
+					}
+				}
 			}
 		});
     }

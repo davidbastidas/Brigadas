@@ -4,8 +4,13 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
 import android.util.Base64;
@@ -19,6 +24,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.applus.BuildConfig;
 import com.applus.R;
 import com.applus.controladores.ClientesController;
 import com.applus.modelos.Cliente;
@@ -28,6 +34,11 @@ import com.applus.modelos.TipoCliente;
 import com.applus.vistas.operario.censo.DialogNic;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,6 +57,7 @@ public class ActualizarCliente extends AppCompatActivity implements DialogNic.Ni
     Cliente clienteEncontrado = null;
     private String fotoSoporte = "";
     private String firmaSoporte = "";
+    private File photoFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,31 +193,35 @@ public class ActualizarCliente extends AppCompatActivity implements DialogNic.Ni
                 String date = new SimpleDateFormat("yyyy-MM-dd")
                         .format(new Date());
                 if (!ac_nombre.getText().toString().trim().equalsIgnoreCase(clienteEncontrado.getNombre())){
-                    cliente = new ClienteAActualizar();
-                    cliente.setCodigo(clienteEncontrado.getCodigo());
-                    cliente.setCampo("nombre");
-                    cliente.setDatoAnterior(clienteEncontrado.getNombre());
-                    cliente.setDatoActual(ac_nombre.getText().toString());
-                    cliente.setFkUsuario(SesionSingleton.getInstance().getFk_id_operario());
-                    cliente.setEsAplicado(0);
-                    cliente.setFecha(date);
-                    cliente.setFoto(fotoSoporte);
-                    cliente.setFirma(firmaSoporte);
-                    cont.insertarClienteActualizar(cliente, activity);
+                    if(!fotoSoporte.equals("") && !firmaSoporte.equals("")){
+                        cliente = new ClienteAActualizar();
+                        cliente.setCodigo(clienteEncontrado.getCodigo());
+                        cliente.setCampo("nombre");
+                        cliente.setDatoAnterior(clienteEncontrado.getNombre());
+                        cliente.setDatoActual(ac_nombre.getText().toString());
+                        cliente.setFkUsuario(SesionSingleton.getInstance().getFk_id_operario());
+                        cliente.setEsAplicado(0);
+                        cliente.setFecha(date);
+                        cliente.setFoto(fotoSoporte);
+                        cliente.setFirma(firmaSoporte);
+                        cont.insertarClienteActualizar(cliente, activity);
+                    }
                 }
 
                 if (!ac_direccion.getText().toString().trim().equalsIgnoreCase(clienteEncontrado.getDireccion())){
-                    cliente = new ClienteAActualizar();
-                    cliente.setCodigo(clienteEncontrado.getCodigo());
-                    cliente.setCampo("direccion");
-                    cliente.setDatoAnterior(clienteEncontrado.getDireccion());
-                    cliente.setDatoActual(ac_direccion.getText().toString());
-                    cliente.setFkUsuario(SesionSingleton.getInstance().getFk_id_operario());
-                    cliente.setEsAplicado(0);
-                    cliente.setFecha(date);
-                    cliente.setFoto(fotoSoporte);
-                    cliente.setFirma(firmaSoporte);
-                    cont.insertarClienteActualizar(cliente, activity);
+                    if(!fotoSoporte.equals("") && !firmaSoporte.equals("")){
+                        cliente = new ClienteAActualizar();
+                        cliente.setCodigo(clienteEncontrado.getCodigo());
+                        cliente.setCampo("direccion");
+                        cliente.setDatoAnterior(clienteEncontrado.getDireccion());
+                        cliente.setDatoActual(ac_direccion.getText().toString());
+                        cliente.setFkUsuario(SesionSingleton.getInstance().getFk_id_operario());
+                        cliente.setEsAplicado(0);
+                        cliente.setFecha(date);
+                        cliente.setFoto(fotoSoporte);
+                        cliente.setFirma(firmaSoporte);
+                        cont.insertarClienteActualizar(cliente, activity);
+                    }
                 }
 
                 if (!ac_nic.getText().toString().trim().equalsIgnoreCase(""+clienteEncontrado.getNic())){
@@ -296,21 +312,44 @@ public class ActualizarCliente extends AppCompatActivity implements DialogNic.Ni
         }
     }
 
-    private void takePhoto(){
+    private void takePhoto() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        photoFile = null;
+        try {
+            photoFile = createImageFile();
+        } catch (IOException ex) {
+        }
+        Uri outputFileUri = null;
+        if (Build.VERSION.SDK_INT >=  Build.VERSION_CODES.N) {
+            outputFileUri = FileProvider.getUriForFile(this,
+                    BuildConfig.APPLICATION_ID + ".provider",
+                    photoFile);
+        } else{
+            outputFileUri = Uri.fromFile(photoFile);
+        }
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
         startActivityForResult(intent, 1888);
-
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode){
             case 1888:
-                System.out.println("recibe");
-                if (resultCode == Activity.RESULT_OK){
-                    Bitmap bmp = (Bitmap) data.getExtras().get("data");
-                    fotoSoporte = BitMapToString(bmp);
-                    System.out.println("foto soporte");
+                if (resultCode == Activity.RESULT_OK) {
+                    try {
+                        Bitmap b = BitmapFactory.decodeFile(mCurrentPhotoPath);
+                        Bitmap out = Bitmap.createScaledBitmap(b, 480, 640, false);
+                        FileOutputStream fOut = new FileOutputStream(photoFile);
+                        out.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+                        fOut.flush();
+                        fOut.close();
+                        b.recycle();
+                        out.recycle();
+                        fotoSoporte = getStringFromFile(photoFile);
+                    } catch (Exception e) {
+                        System.err.println("Error foto: " + e);
+                    }
 
                 }
                 break;
@@ -331,5 +370,43 @@ public class ActualizarCliente extends AppCompatActivity implements DialogNic.Ni
         byte [] b=baos.toByteArray();
         String temp= Base64.encodeToString(b, Base64.DEFAULT);
         return temp;
+    }
+
+    String mCurrentPhotoPath;
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    private String getStringFromFile(File file) throws Exception {
+        InputStream in = new FileInputStream(file);
+        byte[] bytes;
+        byte[] buffer = new byte[8192];
+        int bytesRead;
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try{
+            while ((bytesRead = in.read(buffer)) != -1){
+                output.write(buffer, 0, bytesRead);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        bytes = output.toByteArray();
+        String ret = Base64.encodeToString(bytes, Base64.DEFAULT);
+        //Make sure you close all streams.
+        in.close();
+        return ret;
     }
 }
