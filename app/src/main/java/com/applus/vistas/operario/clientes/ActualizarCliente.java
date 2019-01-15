@@ -188,10 +188,12 @@ public class ActualizarCliente extends AppCompatActivity implements DialogNic.Ni
         ac_guardar_cliente.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ac_guardar_cliente.setEnabled(false);
+
                 ClienteAActualizar cliente = null;
                 String date = new SimpleDateFormat("yyyy-MM-dd")
                         .format(new Date());
+                boolean pasa = true;
+                String motivo = "";
                 if (!ac_nombre.getText().toString().trim().equalsIgnoreCase(clienteEncontrado.getNombre())){
                     if(!fotoSoporte.equals("") && !firmaSoporte.equals("")){
                         cliente = new ClienteAActualizar();
@@ -205,6 +207,9 @@ public class ActualizarCliente extends AppCompatActivity implements DialogNic.Ni
                         cliente.setFoto(fotoSoporte);
                         cliente.setFirma(firmaSoporte);
                         cont.insertarClienteActualizar(cliente, activity);
+                    }else{
+                        pasa = false;
+                        motivo = "Debe tomar una foto y Firmar el cliente.";
                     }
                 }
 
@@ -221,6 +226,9 @@ public class ActualizarCliente extends AppCompatActivity implements DialogNic.Ni
                         cliente.setFoto(fotoSoporte);
                         cliente.setFirma(firmaSoporte);
                         cont.insertarClienteActualizar(cliente, activity);
+                    }else{
+                        pasa = false;
+                        motivo = "Debe tomar una foto y Firmar el cliente.";
                     }
                 }
 
@@ -267,10 +275,15 @@ public class ActualizarCliente extends AppCompatActivity implements DialogNic.Ni
                         cont.insertarClienteActualizar(cliente, activity);
                     }
                 }
+                if(pasa){
+                    ac_guardar_cliente.setEnabled(false);
+                    limpiar();
+                    Toast.makeText(activity, "Cliente Actualizado. Sincronize para enviar.", Toast.LENGTH_LONG).show();
+                    finish();
+                }else{
+                    Toast.makeText(activity, motivo, Toast.LENGTH_LONG).show();
+                }
 
-                limpiar();
-                Toast.makeText(activity, "Cliente Actualizado. Sincronize para enviar.", Toast.LENGTH_LONG).show();
-                finish();
             }
         });
     }

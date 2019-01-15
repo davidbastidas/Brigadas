@@ -33,7 +33,7 @@ public class SignatureView extends View {
     private static final int TOUCH_TOLERANCE = 4;
     private static final int STROKE_WIDTH = 4;
 
-    boolean modified = false;
+    public boolean modified = false;
 
     public SignatureView(Context context) {
         super(context);
@@ -143,7 +143,6 @@ public class SignatureView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        modified = true;
         canvas.drawBitmap(mBitmap, 0, 0, mPaint);
         canvas.drawPath(mPath, mPaint);
     }
@@ -177,6 +176,7 @@ public class SignatureView extends View {
     }
 
     private void touchMove(float x, float y) {
+        modified = true;
         float dx = Math.abs(x - curX);
         float dy = Math.abs(y - curY);
         if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {

@@ -23,15 +23,6 @@ public class Firma extends AppCompatActivity {
 	Button borrarFirma, guardarFirma;
 
 	String firmaString = "";
-	private boolean obligadoFirmar = false, firmoDibujo = false;
-
-	public void setObligadoFirmar(boolean obligadoFirmar) {
-		this.obligadoFirmar = obligadoFirmar;
-	}
-
-	public boolean isFirmoDibujo() {
-		return firmoDibujo;
-	}
 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +32,7 @@ public class Firma extends AppCompatActivity {
 		firma = findViewById(R.id.signature);
 		firma.setSigBackgroundColor(Color.WHITE);
 		firma.setSigColor(Color.BLACK);
+		firma.modified = false;
 		borrarFirma = findViewById(R.id.borrar_firma);
 		borrarFirma.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -52,19 +44,15 @@ public class Firma extends AppCompatActivity {
 		guardarFirma.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if(obligadoFirmar){
-					if(firma.hasChanged()){
-						firmoDibujo = true;
-						Bitmap mySignature = firma.getImage();
-						firmaString = BitMapToString(mySignature);
-						Intent returnIntent = new Intent();
-						returnIntent.putExtra("firma",firmaString);
-						setResult(ActualizarCliente.RESULT_OK,returnIntent);
-						finish();
-					}else{
-						firmoDibujo = true;
-						Toast.makeText(Firma.this, "Por favor, FIRMAR.", Toast.LENGTH_SHORT).show();
-					}
+				if(firma.hasChanged()){
+					Bitmap mySignature = firma.getImage();
+					firmaString = BitMapToString(mySignature);
+					Intent returnIntent = new Intent();
+					returnIntent.putExtra("firma",firmaString);
+					setResult(ActualizarCliente.RESULT_OK,returnIntent);
+					finish();
+				}else{
+					Toast.makeText(Firma.this, "Por favor, FIRMAR.", Toast.LENGTH_SHORT).show();
 				}
 			}
 		});

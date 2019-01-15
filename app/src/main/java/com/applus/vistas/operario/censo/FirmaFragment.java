@@ -79,6 +79,7 @@ public class FirmaFragment extends Fragment{
 		firma = (SignatureView) rootView.findViewById(R.id.signature);
 		firma.setSigBackgroundColor(Color.WHITE);
 		firma.setSigColor(Color.BLACK);
+		firma.modified = false;
 		borrarFirma = (Button) rootView.findViewById(R.id.borrar_firma);
 		borrarFirma.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -90,9 +91,13 @@ public class FirmaFragment extends Fragment{
 		guardarFirma.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Bitmap mySignature = firma.getImage();
-				firmaString = BitMapToString(mySignature);
-				mListener.onRecibirFirma(firmaString);
+				if(firma.hasChanged()){
+					Bitmap mySignature = firma.getImage();
+					firmaString = BitMapToString(mySignature);
+					mListener.onRecibirFirma(firmaString);
+				}else{
+					Toast.makeText(getActivity(), "Por favor, FIRMAR.", Toast.LENGTH_SHORT).show();
+				}
 			}
 		});
 
